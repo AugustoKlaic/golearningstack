@@ -8,10 +8,11 @@ import "time"
 */
 
 type Message struct {
+	Id       int       `json:"id"`
 	Content  string    `json:"content"`
 	DateTime time.Time `json:"dateTime"`
 }
 
 var Messages = []Message{
-	{Content: "Hello World!", DateTime: time.Now()},
+	{Id: 1, Content: "Hello World!", DateTime: time.Now()},
 }
