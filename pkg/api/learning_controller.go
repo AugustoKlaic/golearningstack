@@ -27,7 +27,19 @@ func getMessage(c *gin.Context) {
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
 }
 
+func createMessage(c *gin.Context) {
+	var newMessage Message
+
+	if err := c.BindJSON(&newMessage); err != nil {
+		return
+	}
+
+	Messages = append(Messages, newMessage)
+	c.IndentedJSON(http.StatusCreated, newMessage)
+}
+
 func StartLearningApiRouter(router *gin.Engine) {
 	router.GET("/learning", getAllMessages)
 	router.GET("/learning/:id", getMessage)
+	router.POST("/learning", createMessage)
 }
