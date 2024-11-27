@@ -19,3 +19,11 @@ func (r *LearningRepository) FindAllMessages() ([]MessageEntity, error) {
 	err := r.db.Find(&messages).Error
 	return messages, err
 }
+
+func (r *LearningRepository) GetMessage(id int) (*MessageEntity, error) {
+	var message MessageEntity
+
+	err := r.db.First(&message, id).Error
+
+	return &message, err
+}

@@ -17,3 +17,7 @@ func (s *LearningService) GetAllMessages() ([]MessageEntity, error) {
 func (s *LearningService) CreateMessage(user *MessageEntity) error {
 	return s.repo.CreateMessage(user)
 }
+
+func (s *LearningService) GetMessage(id int) (*MessageEntity, error) {
+	return s.repo.GetMessage(id)
+}

@@ -12,14 +12,18 @@ func ToMessageEntity(request response.Message) *domain.MessageEntity {
 	}
 }
 
-func ToMessageResponse(entities ...domain.MessageEntity) []response.Message {
+func ToMessageResponses(entities ...domain.MessageEntity) []response.Message {
 	responses := make([]response.Message, len(entities))
 	for i, entity := range entities {
-		responses[i] = response.Message{
-			Id:       entity.Id,
-			Content:  entity.Content,
-			DateTime: entity.DateTime,
-		}
+		responses[i] = ToMessageResponse(&entity)
 	}
 	return responses
+}
+
+func ToMessageResponse(entity *domain.MessageEntity) response.Message {
+	return response.Message{
+		Id:       entity.Id,
+		Content:  entity.Content,
+		DateTime: entity.DateTime,
+	}
 }

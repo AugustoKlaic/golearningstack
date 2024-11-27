@@ -6,6 +6,7 @@ import (
 	"github.com/AugustoKlaic/golearningstack/pkg/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 /*
@@ -24,19 +25,18 @@ func NewLearningController(service *service.LearningService) *LearningController
 
 func (ctrl *LearningController) GetAllMessages(c *gin.Context) {
 	var messages, _ = ctrl.service.GetAllMessages()
-	c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(messages...))
+	c.IndentedJSON(http.StatusOK, mapper.ToMessageResponses(messages...))
 }
 
 func (ctrl *LearningController) GetMessage(c *gin.Context) {
-	//var id, _ = strconv.Atoi(c.Param("id"))
-	//
-	//for _, a := range Messages {
-	//	if a.Id == id {
-	//		c.IndentedJSON(http.StatusOK, a)
-	//		return
-	//	}
-	//}
-	//c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+	var id, _ = strconv.Atoi(c.Param("id"))
+
+	var message, err = ctrl.service.GetMessage(id)
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(message))
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+	}
 }
 
 func (ctrl *LearningController) CreateMessage(c *gin.Context) {
