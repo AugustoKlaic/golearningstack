@@ -10,6 +10,7 @@ import (
 /*
  - Using GORM as connector between application and database postgres
  - AutoMigrate creates the tables automatically
+ - Underline is for ignoring the return of function
  - Todo hide connection details in a separate file
  - Todo create a separate func to call automigrate
 */

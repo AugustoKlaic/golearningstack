@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	. "github.com/AugustoKlaic/golearningstack/pkg/api"
+	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
 	. "github.com/AugustoKlaic/golearningstack/pkg/configuration"
-	"github.com/gin-gonic/gin"
 )
 
 /*
@@ -17,12 +16,11 @@ import (
 func main() {
 	fmt.Println("Iniciando o projeto golearningstack!")
 
-	var router = gin.Default()
-
 	ConnectDatabase()
-	StartLearningApiRouter(router)
+	var router = SetupRouter()
 
 	err := router.Run("localhost:8080")
+
 	if err != nil {
 		return
 	}

@@ -13,7 +13,7 @@ import (
 
 type MessageEntity struct {
 	gorm.Model
-	Id       int        `gorm:"primaryKey"`
-	Content  string     `gorm:"size:100;not null"`
-	DateTime *time.Time `gorm:"null"`
+	Id       int       `gorm:"primaryKey"`
+	Content  string    `gorm:"size:100;not null"`
+	DateTime time.Time `gorm:"null"`
 }

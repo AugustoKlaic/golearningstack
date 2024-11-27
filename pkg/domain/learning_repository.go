@@ -13,3 +13,9 @@ func NewLearningRepository(db *gorm.DB) *LearningRepository {
 func (r *LearningRepository) CreateMessage(message *MessageEntity) error {
 	return r.db.Create(message).Error
 }
+
+func (r *LearningRepository) FindAllMessages() ([]MessageEntity, error) {
+	var messages []MessageEntity
+	err := r.db.Find(&messages).Error
+	return messages, err
+}
