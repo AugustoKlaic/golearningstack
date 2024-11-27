@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -11,8 +12,8 @@ import (
 */
 
 type MessageEntity struct {
-	Id int `gorm:"primaryKey"`
-
+	gorm.Model
+	Id       int        `gorm:"primaryKey"`
 	Content  string     `gorm:"size:100;not null"`
 	DateTime *time.Time `gorm:"null"`
 }
