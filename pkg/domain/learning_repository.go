@@ -15,12 +15,18 @@ func NewLearningRepository(db *gorm.DB) *LearningRepository {
 	return &LearningRepository{db: db}
 }
 
-func (r *LearningRepository) CreateMessage(message *MessageEntity) error {
-	return r.db.Create(&message).Error
+func (r *LearningRepository) CreateMessage(message *MessageEntity) (*MessageEntity, error) {
+	if err := r.db.Create(message).Error; err != nil {
+		return nil, err
+	}
+	return message, nil
 }
 
-func (r *LearningRepository) UpdateMessage(message *MessageEntity) error {
-	return r.db.Save(&message).Error
+func (r *LearningRepository) UpdateMessage(message *MessageEntity) (*MessageEntity, error) {
+	if err := r.db.Save(&message).Error; err != nil {
+		return nil, err
+	}
+	return message, nil
 }
 
 func (r *LearningRepository) FindAllMessages() ([]MessageEntity, error) {
@@ -31,9 +37,7 @@ func (r *LearningRepository) FindAllMessages() ([]MessageEntity, error) {
 
 func (r *LearningRepository) GetMessage(id int) (*MessageEntity, error) {
 	var message MessageEntity
-
 	err := r.db.First(&message, id).Error
-
 	return &message, err
 }
 

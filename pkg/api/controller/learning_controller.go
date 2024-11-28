@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/mapper"
 	"github.com/AugustoKlaic/golearningstack/pkg/service"
@@ -31,35 +32,35 @@ func (ctrl *LearningController) GetAllMessages(c *gin.Context) {
 func (ctrl *LearningController) GetMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
 
-	var message, err = ctrl.service.GetMessage(id)
-	if err == nil {
-		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(message))
+	if message, err := ctrl.service.GetMessage(id); err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Message not found. Error: %v", err.Error())})
 	} else {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(message))
 	}
 }
 
 func (ctrl *LearningController) CreateMessage(c *gin.Context) {
-	var newMessage request.MessageRequest
+	var message request.MessageRequest
 
-	if err := c.BindJSON(&newMessage); err != nil {
-		return
+	if err := c.BindJSON(&message); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("could not bind request body. Error: %v", err.Error())})
 	}
 
-	_ = ctrl.service.CreateMessage(mapper.ToMessageEntity(newMessage))
-
-	c.IndentedJSON(http.StatusCreated, newMessage)
+	if newMessage, err := ctrl.service.CreateMessage(mapper.ToMessageEntity(message)); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Error occured: %v", err.Error())})
+	} else {
+		c.IndentedJSON(http.StatusCreated, newMessage)
+	}
 }
 
 func (ctrl *LearningController) DeleteMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
 
-	err := ctrl.service.DeleteMessage(id)
-	if err == nil {
-		c.Status(http.StatusNoContent)
-	} else {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+	if err := ctrl.service.DeleteMessage(id); err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Message not found. Error: %v", err.Error())})
 	}
+
+	c.Status(http.StatusNoContent)
 }
 
 func (ctrl *LearningController) UpdateMessage(c *gin.Context) {
@@ -67,14 +68,12 @@ func (ctrl *LearningController) UpdateMessage(c *gin.Context) {
 	var updateMessage request.MessageRequest
 
 	if err := c.BindJSON(&updateMessage); err != nil {
-		return
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("could not bind request body. Error: %v", err.Error())})
 	}
 
-	newMessage, err := ctrl.service.UpdateMessage(mapper.ToMessageEntity(updateMessage), id)
-
-	if err == nil {
-		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(newMessage))
+	if newMessage, err := ctrl.service.UpdateMessage(mapper.ToMessageEntity(updateMessage), id); err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Message not found. Error: %v", err.Error())})
 	} else {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(newMessage))
 	}
 }
