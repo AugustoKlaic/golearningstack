@@ -9,6 +9,8 @@ import (
  - In this file I am creating a model of database table
  - I am using the GORM library
  - In GORM for a field to be nullable, it has to be a pointer or use null types from database/sql package
+ - The use of gorm.Model will include audit columns in database
+ - The gorm.Model will set soft delete as standard
 */
 
 type MessageEntity struct {

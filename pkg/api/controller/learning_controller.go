@@ -32,7 +32,7 @@ func (ctrl *LearningController) GetMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
 
 	var message, err = ctrl.service.GetMessage(id)
-	if err != nil {
+	if err == nil {
 		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(message))
 	} else {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
@@ -52,36 +52,29 @@ func (ctrl *LearningController) CreateMessage(c *gin.Context) {
 }
 
 func (ctrl *LearningController) DeleteMessage(c *gin.Context) {
-	//var id, _ = strconv.Atoi(c.Param("id"))
-	//
-	//for i, a := range Messages {
-	//	if a.Id == id {
-	//		Messages = append(Messages[:i], Messages[i+1:]...)
-	//		c.Status(http.StatusNoContent)
-	//		return
-	//	}
-	//}
-	//
-	//c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+	var id, _ = strconv.Atoi(c.Param("id"))
+
+	err := ctrl.service.DeleteMessage(id)
+	if err == nil {
+		c.Status(http.StatusNoContent)
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+	}
 }
 
 func (ctrl *LearningController) UpdateMessage(c *gin.Context) {
-	//var id, _ = strconv.Atoi(c.Param("id"))
-	//
-	//for i, a := range Messages {
-	//	if a.Id == id {
-	//		var updateMessage Message
-	//
-	//		if err := c.BindJSON(&updateMessage); err != nil {
-	//			return
-	//		}
-	//
-	//		Messages[i].Content = updateMessage.Content
-	//		Messages[i].DateTime = updateMessage.DateTime
-	//
-	//		c.IndentedJSON(http.StatusOK, Messages[i])
-	//		return
-	//	}
-	//}
-	//c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+	var id, _ = strconv.Atoi(c.Param("id"))
+	var updateMessage response.Message
+
+	if err := c.BindJSON(&updateMessage); err != nil {
+		return
+	}
+
+	newMessage, err := ctrl.service.UpdateMessage(&updateMessage, id)
+
+	if err == nil {
+		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(newMessage))
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Message not found"})
+	}
 }
