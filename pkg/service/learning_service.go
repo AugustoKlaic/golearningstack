@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/AugustoKlaic/golearningstack/pkg/api/response"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain"
 )
 
@@ -29,7 +28,7 @@ func (s *LearningService) DeleteMessage(id int) error {
 	return s.repo.DeleteMessage(id)
 }
 
-func (s *LearningService) UpdateMessage(newMessage *response.Message, id int) (*MessageEntity, error) {
+func (s *LearningService) UpdateMessage(newMessage *MessageEntity, id int) (*MessageEntity, error) {
 	var oldMessage, err = s.GetMessage(id)
 
 	if err == nil {

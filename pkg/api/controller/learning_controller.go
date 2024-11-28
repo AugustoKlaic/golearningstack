@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/AugustoKlaic/golearningstack/pkg/api/response"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/mapper"
 	"github.com/AugustoKlaic/golearningstack/pkg/service"
 	"github.com/gin-gonic/gin"
@@ -40,7 +40,7 @@ func (ctrl *LearningController) GetMessage(c *gin.Context) {
 }
 
 func (ctrl *LearningController) CreateMessage(c *gin.Context) {
-	var newMessage response.Message
+	var newMessage request.MessageRequest
 
 	if err := c.BindJSON(&newMessage); err != nil {
 		return
@@ -64,13 +64,13 @@ func (ctrl *LearningController) DeleteMessage(c *gin.Context) {
 
 func (ctrl *LearningController) UpdateMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
-	var updateMessage response.Message
+	var updateMessage request.MessageRequest
 
 	if err := c.BindJSON(&updateMessage); err != nil {
 		return
 	}
 
-	newMessage, err := ctrl.service.UpdateMessage(&updateMessage, id)
+	newMessage, err := ctrl.service.UpdateMessage(mapper.ToMessageEntity(updateMessage), id)
 
 	if err == nil {
 		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(newMessage))

@@ -1,11 +1,12 @@
 package mapper
 
 import (
+	"github.com/AugustoKlaic/golearningstack/pkg/api/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/response"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain"
 )
 
-func ToMessageEntity(request response.Message) *domain.MessageEntity {
+func ToMessageEntity(request request.MessageRequest) *domain.MessageEntity {
 	return &domain.MessageEntity{
 		Content:  request.Content,
 		DateTime: request.DateTime,
