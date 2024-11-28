@@ -7,10 +7,15 @@ import (
 )
 
 /*
- - For the web api I will be utilizing the GIN web framework
- - I am starting router in default mode
- - I am registering all routes with its respective functions
- - I am running the server at localhost:8080 and checking for error at startup
+ - Next-steps:
+	- Add custom errors
+	- Add global error handler
+	- Add queue (rabbit or kafka)
+	- Add logging
+	- Do a more complex entity to test GORM framework
+	- Export properties (connections, passwords...) to a separate file with placeHolders
+	- Secure API with jwtToken
+	- MongoDb?
 */
 
 func main() {

@@ -10,12 +10,6 @@ import (
 	"strconv"
 )
 
-/*
- - Here will be created all routes for the specific domain "learning"
- - The only function exported here will be the one with the router
- - The for loop iterates over copies of the original value <- pay attention to that
-*/
-
 type LearningController struct {
 	service *service.LearningService
 }

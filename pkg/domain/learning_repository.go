@@ -4,7 +4,6 @@ import "gorm.io/gorm"
 
 /*
  - Operator Unscoped means that it will execute the designated operation on soft deleted rows
- -
 */
 
 type LearningRepository struct {
