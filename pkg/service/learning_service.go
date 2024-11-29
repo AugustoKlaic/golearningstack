@@ -2,7 +2,9 @@ package service
 
 import (
 	"fmt"
-	. "github.com/AugustoKlaic/golearningstack/pkg/domain"
+	. "github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
+	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
+	. "github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
 )
 
 type LearningService struct {
@@ -31,7 +33,7 @@ func (s *LearningService) CreateMessage(message *MessageEntity) (*MessageEntity,
 
 func (s *LearningService) GetMessage(id int) (*MessageEntity, error) {
 	if message, err := s.repo.GetMessage(id); err != nil {
-		return nil, fmt.Errorf("problem retrieving message with id: %d. Error: %v", id, err)
+		return nil, &MessageNotFoundError{Id: id}
 	} else {
 		return message, nil
 	}

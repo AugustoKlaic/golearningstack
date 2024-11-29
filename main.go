@@ -8,7 +8,7 @@ import (
 
 /*
  - Next-steps:
-	- Add custom errors
+	- Add custom errors - ok
 	- Add global error handler
 	- Add queue (rabbit or kafka)
 	- Add logging

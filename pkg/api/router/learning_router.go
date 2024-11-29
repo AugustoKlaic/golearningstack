@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/AugustoKlaic/golearningstack/pkg/api/controller"
 	"github.com/AugustoKlaic/golearningstack/pkg/configuration"
-	"github.com/AugustoKlaic/golearningstack/pkg/domain"
+	"github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
 	"github.com/AugustoKlaic/golearningstack/pkg/service"
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +11,7 @@ import (
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
-	messageRepo := domain.NewLearningRepository(configuration.DB)
+	messageRepo := repository.NewLearningRepository(configuration.DB)
 	messageService := service.NewLearningService(messageRepo)
 	messageController := controller.NewLearningController(messageService)
 

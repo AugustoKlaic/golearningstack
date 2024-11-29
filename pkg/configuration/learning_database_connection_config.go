@@ -1,7 +1,7 @@
 package configuration
 
 import (
-	"github.com/AugustoKlaic/golearningstack/pkg/domain"
+	"github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -26,7 +26,7 @@ func ConnectDatabase() {
 		log.Println("Database connected!")
 	}
 
-	_ = db.AutoMigrate(&domain.MessageEntity{})
+	_ = db.AutoMigrate(&entity.MessageEntity{})
 
 	DB = db
 }
