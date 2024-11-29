@@ -9,7 +9,8 @@ import (
 /*
  - Next-steps:
 	- Add custom errors - ok
-	- Add global error handler
+	- Add global error handler - ok
+	- Unit test
 	- Add queue (rabbit or kafka)
 	- Add logging
 	- Do a more complex entity to test GORM framework

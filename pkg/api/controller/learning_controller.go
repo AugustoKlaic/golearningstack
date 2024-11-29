@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/errorvalidation"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/mapper"
@@ -29,6 +28,7 @@ func (ctrl *LearningController) GetMessage(c *gin.Context) {
 
 	if message, err := ctrl.service.GetMessage(id); err != nil {
 		HandleError(c, err)
+		return
 	} else {
 		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(message))
 	}
@@ -38,11 +38,13 @@ func (ctrl *LearningController) CreateMessage(c *gin.Context) {
 	var message request.MessageRequest
 
 	if err := c.BindJSON(&message); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("could not bind request body. Error: %v", err.Error())})
+		HandleError(c, err)
+		return
 	}
 
 	if newMessage, err := ctrl.service.CreateMessage(mapper.ToMessageEntity(message)); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Error occured: %v", err.Error())})
+		HandleError(c, err)
+		return
 	} else {
 		c.IndentedJSON(http.StatusCreated, newMessage)
 	}
@@ -53,6 +55,7 @@ func (ctrl *LearningController) DeleteMessage(c *gin.Context) {
 
 	if err := ctrl.service.DeleteMessage(id); err != nil {
 		HandleError(c, err)
+		return
 	}
 
 	c.Status(http.StatusNoContent)
@@ -63,11 +66,13 @@ func (ctrl *LearningController) UpdateMessage(c *gin.Context) {
 	var updateMessage request.MessageRequest
 
 	if err := c.BindJSON(&updateMessage); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("could not bind request body. Error: %v", err.Error())})
+		HandleError(c, err)
+		return
 	}
 
 	if newMessage, err := ctrl.service.UpdateMessage(mapper.ToMessageEntity(updateMessage), id); err != nil {
 		HandleError(c, err)
+		return
 	} else {
 		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(newMessage))
 	}
