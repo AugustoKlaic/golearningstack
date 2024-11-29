@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	. "github.com/AugustoKlaic/golearningstack/pkg/api/errorvalidation"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/mapper"
 	"github.com/AugustoKlaic/golearningstack/pkg/service"
@@ -27,7 +28,7 @@ func (ctrl *LearningController) GetMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
 
 	if message, err := ctrl.service.GetMessage(id); err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Message not found. Error: %v", err.Error())})
+		HandleError(c, err)
 	} else {
 		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(message))
 	}
@@ -51,7 +52,7 @@ func (ctrl *LearningController) DeleteMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
 
 	if err := ctrl.service.DeleteMessage(id); err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Message not found. Error: %v", err.Error())})
+		HandleError(c, err)
 	}
 
 	c.Status(http.StatusNoContent)
@@ -66,7 +67,7 @@ func (ctrl *LearningController) UpdateMessage(c *gin.Context) {
 	}
 
 	if newMessage, err := ctrl.service.UpdateMessage(mapper.ToMessageEntity(updateMessage), id); err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Message not found. Error: %v", err.Error())})
+		HandleError(c, err)
 	} else {
 		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponse(newMessage))
 	}
