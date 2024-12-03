@@ -8,10 +8,10 @@ import (
 )
 
 type LearningService struct {
-	repo *LearningRepository
+	repo LearningRepositoryInterface
 }
 
-func NewLearningService(repo *LearningRepository) *LearningService {
+func NewLearningService(repo LearningRepositoryInterface) *LearningService {
 	return &LearningService{repo: repo}
 }
 
