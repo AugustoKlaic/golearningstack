@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
 	. "github.com/AugustoKlaic/golearningstack/pkg/configuration"
+	"github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
+	"github.com/AugustoKlaic/golearningstack/pkg/service"
 )
 
 /*
@@ -17,17 +20,17 @@ import (
 	- Export properties (connections, passwords...) to a separate file with placeHolders
 	- Secure API with jwtToken
 	- MongoDb?
+	- Sonar? It exists for golang?
 */
 
 func main() {
 	fmt.Println("Iniciando o projeto golearningstack!")
 
-	ConnectDatabase()
-	var router = SetupRouter()
+	messageRepo := repository.NewLearningRepository(ConnectDatabase())
+	messageService := service.NewLearningService(messageRepo)
+	messageController := controller.NewLearningController(messageService)
 
-	err := router.Run("localhost:8080")
-
-	if err != nil {
+	if err := SetupRouter(messageController).Run("localhost:8080"); err != nil {
 		return
 	}
 }

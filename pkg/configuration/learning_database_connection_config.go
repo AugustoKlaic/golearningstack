@@ -15,9 +15,7 @@ import (
  - Todo create a separate func to call automigrate
 */
 
-var DB *gorm.DB
-
-func ConnectDatabase() {
+func ConnectDatabase() *gorm.DB {
 	dsn := "host=localhost user=postgres password=postgres dbname=learningDb port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -28,5 +26,5 @@ func ConnectDatabase() {
 
 	_ = db.AutoMigrate(&entity.MessageEntity{})
 
-	DB = db
+	return db
 }

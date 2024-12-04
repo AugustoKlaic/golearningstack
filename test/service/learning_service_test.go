@@ -5,7 +5,7 @@ import (
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	error2 "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
 	"github.com/AugustoKlaic/golearningstack/pkg/service"
-	mock "github.com/AugustoKlaic/golearningstack/test/mock"
+	mock "github.com/AugustoKlaic/golearningstack/test/mock/repository"
 	"github.com/go-playground/assert/v2"
 	"github.com/golang/mock/gomock"
 	"testing"

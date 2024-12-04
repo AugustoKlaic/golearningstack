@@ -11,4 +11,4 @@ type LearningRepositoryInterface interface {
 }
 
 // this directive is for creating a mock of this interface
-//go:generate mockgen -source=learning_repository_interface.go -destination=../../../test/mock/learning_repository_mock.go
+//go:generate mockgen -source=learning_repository_interface.go -destination=../../../test/mock/repository/learning_repository_mock.go

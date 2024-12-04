@@ -11,10 +11,10 @@ import (
 )
 
 type LearningController struct {
-	service *service.LearningService
+	service service.LearningServiceInterface
 }
 
-func NewLearningController(service *service.LearningService) *LearningController {
+func NewLearningController(service service.LearningServiceInterface) *LearningController {
 	return &LearningController{service: service}
 }
 
