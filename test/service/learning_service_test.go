@@ -55,57 +55,57 @@ var allMessages = []entity.MessageEntity{firstMessage, secondMessage}
 func TestGetAllMessages(t *testing.T) {
 	var suite = setupTestSuite(t)
 
-	suite.mockRepo.EXPECT().FindAllMessages().Return(allMessages, nil).Times(1)
+	t.Run("should get all messages successfully", func(t *testing.T) {
+		suite.mockRepo.EXPECT().FindAllMessages().Return(allMessages, nil).Times(1)
 
-	var expected, err = suite.learningService.GetAllMessages()
+		var expected, err = suite.learningService.GetAllMessages()
 
-	assert.Equal(t, nil, err)
-	assert.Equal(t, len(expected), 2)
-	assert.Equal(t, expected[0].Id, firstMessage.Id)
-	assert.Equal(t, expected[1].Id, secondMessage.Id)
-}
+		assert.Equal(t, nil, err)
+		assert.Equal(t, len(expected), 2)
+		assert.Equal(t, expected[0].Id, firstMessage.Id)
+		assert.Equal(t, expected[1].Id, secondMessage.Id)
+	})
 
-func TestGetAllMessagesEmpty(t *testing.T) {
-	var suite = setupTestSuite(t)
+	t.Run("should get all messages empty", func(t *testing.T) {
+		suite.mockRepo.EXPECT().FindAllMessages().Return([]entity.MessageEntity{}, nil).Times(1)
 
-	suite.mockRepo.EXPECT().FindAllMessages().Return([]entity.MessageEntity{}, nil).Times(1)
+		var expected, err = suite.learningService.GetAllMessages()
 
-	var expected, err = suite.learningService.GetAllMessages()
+		assert.Equal(t, nil, err)
+		assert.Equal(t, len(expected), 0)
+	})
 
-	assert.Equal(t, nil, err)
-	assert.Equal(t, len(expected), 0)
-}
+	t.Run("should get all messages error", func(t *testing.T) {
+		suite.mockRepo.EXPECT().FindAllMessages().Return(nil, errors.New("")).Times(1)
 
-func TestGetAllMessagesError(t *testing.T) {
-	var suite = setupTestSuite(t)
+		var expected, err = suite.learningService.GetAllMessages()
 
-	suite.mockRepo.EXPECT().FindAllMessages().Return(nil, errors.New("")).Times(1)
-
-	var expected, err = suite.learningService.GetAllMessages()
-
-	assert.Equal(t, nil, expected)
-	assert.Equal(t, "problem retrieving messages: ", err.Error())
+		assert.Equal(t, nil, expected)
+		assert.Equal(t, "problem retrieving messages: ", err.Error())
+	})
 }
 
 func TestCreateMessage(t *testing.T) {
 	var suite = setupTestSuite(t)
 
-	suite.mockRepo.EXPECT().CreateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).Return(&firstMessage, nil).Times(1)
-	var expected, err = suite.learningService.CreateMessage(&firstMessage)
+	t.Run("should create a message successfully", func(t *testing.T) {
+		suite.mockRepo.EXPECT().CreateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).Return(&firstMessage, nil).Times(1)
 
-	assert.Equal(t, nil, err)
-	assert.Equal(t, expected.Content, firstMessage.Content)
-	assert.Equal(t, expected.Id, firstMessage.Id)
-}
+		var expected, err = suite.learningService.CreateMessage(&firstMessage)
 
-func TestCreateMessageError(t *testing.T) {
-	var suite = setupTestSuite(t)
+		assert.Equal(t, nil, err)
+		assert.Equal(t, expected.Content, firstMessage.Content)
+		assert.Equal(t, expected.Id, firstMessage.Id)
+	})
 
-	suite.mockRepo.EXPECT().CreateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).Return(nil, errors.New("")).Times(1)
-	var expected, err = suite.learningService.CreateMessage(&firstMessage)
+	t.Run("should create a message error", func(t *testing.T) {
+		suite.mockRepo.EXPECT().CreateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).Return(nil, errors.New("")).Times(1)
 
-	assert.Equal(t, nil, expected)
-	assert.Equal(t, "problem creating message: ", err.Error())
+		var expected, err = suite.learningService.CreateMessage(&firstMessage)
+
+		assert.Equal(t, nil, expected)
+		assert.Equal(t, "problem creating message: ", err.Error())
+	})
 }
 
 func TestGetMessage(t *testing.T) {
@@ -122,33 +122,37 @@ func TestGetMessage(t *testing.T) {
 				return nil, errors.New("")
 			}).Times(3)
 
-	var expectedFirst, errFirst = suite.learningService.GetMessage(1)
+	t.Run("should get first message successfully", func(t *testing.T) {
+		var expectedFirst, errFirst = suite.learningService.GetMessage(1)
 
-	assert.Equal(t, nil, errFirst)
-	assert.Equal(t, expectedFirst.Content, firstMessage.Content)
-	assert.Equal(t, expectedFirst.Id, firstMessage.Id)
+		assert.Equal(t, nil, errFirst)
+		assert.Equal(t, expectedFirst.Content, firstMessage.Content)
+		assert.Equal(t, expectedFirst.Id, firstMessage.Id)
+	})
 
-	var expectedSecond, errSecond = suite.learningService.GetMessage(2)
+	t.Run("should get second message successfully", func(t *testing.T) {
+		var expectedSecond, errSecond = suite.learningService.GetMessage(2)
 
-	assert.Equal(t, nil, errSecond)
-	assert.Equal(t, expectedSecond.Content, secondMessage.Content)
-	assert.Equal(t, expectedSecond.Id, secondMessage.Id)
+		assert.Equal(t, nil, errSecond)
+		assert.Equal(t, expectedSecond.Content, secondMessage.Content)
+		assert.Equal(t, expectedSecond.Id, secondMessage.Id)
+	})
 
-	var expectedNil, err = suite.learningService.GetMessage(0)
+	t.Run("should not find message", func(t *testing.T) {
+		var expectedNil, err = suite.learningService.GetMessage(0)
 
-	assert.Equal(t, error2.MessageNotFoundError{Id: 0}, err)
-	assert.Equal(t, nil, expectedNil)
+		assert.Equal(t, error2.MessageNotFoundError{Id: 0}, err)
+		assert.Equal(t, nil, expectedNil)
+	})
 }
 
 func TestUpdateMessage(t *testing.T) {
 	var suite = setupTestSuite(t)
-
+	var capturedMessage *entity.MessageEntity
 	var update = &entity.MessageEntity{
 		Content:  "updated",
 		DateTime: time.Date(2000, 1, 1, 1, 0, 0, 0, time.UTC),
 	}
-
-	var capturedMessage *entity.MessageEntity
 
 	suite.mockRepo.EXPECT().GetMessage(gomock.AssignableToTypeOf(int(0))).
 		DoAndReturn(
@@ -168,38 +172,42 @@ func TestUpdateMessage(t *testing.T) {
 			return updatedMessage, nil
 		}).Times(1)
 
-	var expectedUpdate, nilErr = suite.learningService.UpdateMessage(update, 1)
+	t.Run("should update message successfully", func(t *testing.T) {
+		var expectedUpdate, nilErr = suite.learningService.UpdateMessage(update, 1)
 
-	assert.Equal(t, nil, nilErr)
-	assert.Equal(t, expectedUpdate.Content, update.Content)
-	assert.Equal(t, expectedUpdate.DateTime, update.DateTime)
+		assert.Equal(t, nil, nilErr)
+		assert.Equal(t, expectedUpdate.Content, update.Content)
+		assert.Equal(t, expectedUpdate.DateTime, update.DateTime)
+	})
 
-	var expectedNil, NotFoundErr = suite.learningService.UpdateMessage(update, 0)
+	t.Run("should not find message to update", func(t *testing.T) {
+		var expectedNil, NotFoundErr = suite.learningService.UpdateMessage(update, 0)
 
-	assert.Equal(t, nil, expectedNil)
-	assert.Equal(t, NotFoundErr, error2.MessageNotFoundError{Id: 0})
+		assert.Equal(t, nil, expectedNil)
+		assert.Equal(t, NotFoundErr, error2.MessageNotFoundError{Id: 0})
+	})
 
-	suite.mockRepo.EXPECT().UpdateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).
-		Return(nil, errors.New("")).Times(1)
+	t.Run("should occur error when updating", func(t *testing.T) {
+		suite.mockRepo.EXPECT().UpdateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).
+			Return(nil, errors.New("")).Times(1)
 
-	var _, err = suite.learningService.UpdateMessage(update, 1)
-
-	assert.Equal(t, "problem updating message with id: 1. Error: ", err.Error())
+		var _, err = suite.learningService.UpdateMessage(update, 1)
+		assert.Equal(t, "problem updating message with id: 1. Error: ", err.Error())
+	})
 }
 
 func TestDeleteMessage(t *testing.T) {
 	var suite = setupTestSuite(t)
 
-	suite.mockRepo.EXPECT().DeleteMessage(gomock.AssignableToTypeOf(int(0))).Return(nil).Times(1)
+	t.Run("should delete message successfully", func(t *testing.T) {
+		suite.mockRepo.EXPECT().DeleteMessage(gomock.AssignableToTypeOf(int(0))).Return(nil).Times(1)
+		var err = suite.learningService.DeleteMessage(1)
+		assert.Equal(t, nil, err)
+	})
 
-	var err = suite.learningService.DeleteMessage(1)
-
-	assert.Equal(t, nil, err)
-}
-
-func TestDeleteMessageError(t *testing.T) {
-	var suite = setupTestSuite(t)
-	suite.mockRepo.EXPECT().DeleteMessage(gomock.AssignableToTypeOf(int(0))).Return(errors.New("")).Times(1)
-	var err = suite.learningService.DeleteMessage(1)
-	assert.Equal(t, "problem deleting message with id: 1. Error: ", err.Error())
+	t.Run("should occur error when deleting", func(t *testing.T) {
+		suite.mockRepo.EXPECT().DeleteMessage(gomock.AssignableToTypeOf(int(0))).Return(errors.New("")).Times(1)
+		var err = suite.learningService.DeleteMessage(1)
+		assert.Equal(t, "problem deleting message with id: 1. Error: ", err.Error())
+	})
 }
