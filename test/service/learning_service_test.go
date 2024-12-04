@@ -85,3 +85,14 @@ func TestGetAllMessagesError(t *testing.T) {
 	assert.Equal(t, nil, expected)
 	assert.Equal(t, "problem retrieving messages: ", err.Error())
 }
+
+func TestCreateMessage(t *testing.T) {
+	var suite = setupTestSuite(t)
+
+	suite.mockRepo.EXPECT().CreateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).Return(&firstMessage, nil).Times(1)
+	var expected, err = suite.learningService.CreateMessage(&firstMessage)
+
+	assert.Equal(t, nil, err)
+	assert.Equal(t, expected.Content, firstMessage.Content)
+	assert.Equal(t, expected.Id, firstMessage.Id)
+}
