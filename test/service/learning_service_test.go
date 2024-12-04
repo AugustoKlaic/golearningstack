@@ -186,3 +186,20 @@ func TestUpdateMessage(t *testing.T) {
 
 	assert.Equal(t, "problem updating message with id: 1. Error: ", err.Error())
 }
+
+func TestDeleteMessage(t *testing.T) {
+	var suite = setupTestSuite(t)
+
+	suite.mockRepo.EXPECT().DeleteMessage(gomock.AssignableToTypeOf(int(0))).Return(nil).Times(1)
+
+	var err = suite.learningService.DeleteMessage(1)
+
+	assert.Equal(t, nil, err)
+}
+
+func TestDeleteMessageError(t *testing.T) {
+	var suite = setupTestSuite(t)
+	suite.mockRepo.EXPECT().DeleteMessage(gomock.AssignableToTypeOf(int(0))).Return(errors.New("")).Times(1)
+	var err = suite.learningService.DeleteMessage(1)
+	assert.Equal(t, "problem deleting message with id: 1. Error: ", err.Error())
+}
