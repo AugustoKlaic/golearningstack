@@ -19,8 +19,12 @@ func NewLearningController(service service.LearningServiceInterface) *LearningCo
 }
 
 func (ctrl *LearningController) GetAllMessages(c *gin.Context) {
-	var messages, _ = ctrl.service.GetAllMessages()
-	c.IndentedJSON(http.StatusOK, mapper.ToMessageResponses(messages...))
+	if messages, err := ctrl.service.GetAllMessages(); err != nil {
+		HandleError(c, err)
+		return
+	} else {
+		c.IndentedJSON(http.StatusOK, mapper.ToMessageResponses(messages...))
+	}
 }
 
 func (ctrl *LearningController) GetMessage(c *gin.Context) {
