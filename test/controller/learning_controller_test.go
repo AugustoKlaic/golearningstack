@@ -247,6 +247,39 @@ func TestCreateMessage(t *testing.T) {
 	})
 }
 
+func TestDeleteMessage(t *testing.T) {
+	suite := setupTestSuite(t)
+	gin.SetMode(gin.TestMode)
+	router := SetupRouter(suite.learningController)
+
+	t.Run("should delete a message successfully 204 NoContent", func(t *testing.T) {
+		suite.mockService.EXPECT().DeleteMessage(gomock.AssignableToTypeOf(int(0))).Return(nil).Times(1)
+		rec := httptest.NewRecorder()
+		if req, err := http.NewRequest("DELETE", "/learning/1", nil); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusNoContent, rec.Code)
+		}
+	})
+
+	t.Run("should occur error when deleting message 500 internal server error", func(t *testing.T) {
+		suite.mockService.EXPECT().DeleteMessage(gomock.AssignableToTypeOf(int(0))).
+			Return(errors.New("problem deleting message")).Times(1)
+		rec := httptest.NewRecorder()
+		if req, err := http.NewRequest("DELETE", "/learning/1", nil); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusInternalServerError, rec.Code)
+			var actualResponse map[string]interface{}
+			jsonDecoder(t, rec.Body.String(), &actualResponse)
+			expectedMessage := "problem deleting message"
+			assert.Equal(t, expectedMessage, actualResponse["message"])
+		}
+	})
+}
+
 func jsonEncoder[T any](t *testing.T, body T) []byte {
 	encodedJson, err := json.Marshal(body)
 
