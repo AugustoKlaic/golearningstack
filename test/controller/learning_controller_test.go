@@ -213,7 +213,7 @@ func TestCreateMessage(t *testing.T) {
 
 	t.Run("should occur error mapping request body 400 bad request", func(t *testing.T) {
 		rec := httptest.NewRecorder()
-		if req, err := http.NewRequest("POST", "/learning", bytes.NewReader([]byte("{invalidJson"))); err != nil {
+		if req, err := http.NewRequest("POST", "/learning", bytes.NewReader([]byte("{}"))); err != nil {
 			t.Fatalf("Erro ao criar requisição: %v", err)
 		} else {
 			router.ServeHTTP(rec, req)
@@ -221,7 +221,8 @@ func TestCreateMessage(t *testing.T) {
 
 			var actualResponse map[string]interface{}
 			jsonDecoder(t, rec.Body.String(), &actualResponse)
-			expectedMessage := "invalid character 'i' looking for beginning of object key string"
+			expectedMessage := "invalid request JSON. Error: Key: 'MessageRequest.Content' Error:Field validation for 'Content' failed on the 'required' tag\n" +
+				"Key: 'MessageRequest.DateTime' Error:Field validation for 'DateTime' failed on the 'required' tag"
 
 			assert.Equal(t, expectedMessage, actualResponse["message"])
 		}
@@ -276,6 +277,96 @@ func TestDeleteMessage(t *testing.T) {
 			jsonDecoder(t, rec.Body.String(), &actualResponse)
 			expectedMessage := "problem deleting message"
 			assert.Equal(t, expectedMessage, actualResponse["message"])
+		}
+	})
+}
+
+func TestUpdateMessage(t *testing.T) {
+	var suite = setupTestSuite(t)
+	gin.SetMode(gin.TestMode)
+	router := SetupRouter(suite.learningController)
+
+	suite.mockService.EXPECT().UpdateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{}),
+		gomock.AssignableToTypeOf(int(0))).
+		DoAndReturn(func(updatedMessage *entity.MessageEntity, id int) (*entity.MessageEntity, error) {
+			for _, message := range allMessages {
+				if message.Id == id {
+					message.Content = messageRequest.Content
+					message.DateTime = messageRequest.DateTime
+					return &message, nil
+				}
+			}
+			return nil, &MessageNotFoundError{Id: id}
+		}).Times(2)
+
+	t.Run("should update a message successfully 200 ok", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		body := jsonEncoder(t, messageRequest)
+		if req, err := http.NewRequest("PATCH", "/learning/1", bytes.NewReader(body)); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusOK, rec.Code)
+
+			var expected response.Message
+			jsonDecoder(t, rec.Body.String(), &expected)
+
+			assert.Equal(t, messageRequest.Content, expected.Content)
+			assert.Equal(t, messageRequest.DateTime, expected.DateTime)
+			assert.Equal(t, 1, expected.Id)
+		}
+	})
+
+	t.Run("should occur error mapping request body 400 bad request", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		if req, err := http.NewRequest("PATCH", "/learning/1", bytes.NewReader([]byte("{}"))); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+			var actualResponse map[string]interface{}
+			jsonDecoder(t, rec.Body.String(), &actualResponse)
+			expectedMessage := "invalid request JSON. Error: Key: 'MessageRequest.Content' Error:Field validation for 'Content' failed on the 'required' tag\n" +
+				"Key: 'MessageRequest.DateTime' Error:Field validation for 'DateTime' failed on the 'required' tag"
+
+			assert.Equal(t, expectedMessage, actualResponse["message"])
+		}
+	})
+
+	t.Run("should not found message to update 404 not found", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		body := jsonEncoder(t, messageRequest)
+		if req, err := http.NewRequest("PATCH", "/learning/3", bytes.NewReader(body)); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusNotFound, rec.Code)
+
+			var actualResponse map[string]interface{}
+			jsonDecoder(t, rec.Body.String(), &actualResponse)
+			expectedMessage := "Message not found. Error: message with Id 3 not found"
+
+			assert.Equal(t, expectedMessage, actualResponse["message"])
+		}
+	})
+
+	t.Run("should occur error updating message 500 internal server error", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		suite.mockService.EXPECT().UpdateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{}), gomock.AssignableToTypeOf(int(0))).
+			Return(nil, errors.New("problem updating message")).
+			Times(1)
+
+		body := jsonEncoder(t, messageRequest)
+		if req, err := http.NewRequest("PATCH", "/learning/1", bytes.NewReader(body)); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusInternalServerError, rec.Code)
+
+			var actualResponse map[string]interface{}
+			jsonDecoder(t, rec.Body.String(), &actualResponse)
+			assert.Equal(t, "problem updating message", actualResponse["message"])
 		}
 	})
 }

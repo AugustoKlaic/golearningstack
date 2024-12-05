@@ -13,7 +13,7 @@ import (
  - Next-steps:
 	- Add custom errors - ok
 	- Add global error handler - ok
-	- Unit test
+	- Unit test - ok
 	- Add queue (rabbit or kafka)
 	- Add logging
 	- Do a more complex entity to test GORM framework
