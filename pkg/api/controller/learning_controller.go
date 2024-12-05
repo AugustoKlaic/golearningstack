@@ -50,7 +50,7 @@ func (ctrl *LearningController) CreateMessage(c *gin.Context) {
 		HandleError(c, err)
 		return
 	} else {
-		c.IndentedJSON(http.StatusCreated, newMessage)
+		c.IndentedJSON(http.StatusCreated, mapper.ToMessageResponse(newMessage))
 	}
 }
 

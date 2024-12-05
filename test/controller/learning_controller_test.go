@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/controller"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/response"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
@@ -34,6 +36,11 @@ func setupTestSuite(t *testing.T) *TestSuite {
 		mockService:        mockService,
 		learningController: learningController,
 	}
+}
+
+var messageRequest = request.MessageRequest{
+	Content:  "Message Request",
+	DateTime: time.Date(2024, 3, 3, 3, 0, 0, 0, time.UTC),
 }
 
 var firstMessage, secondMessage = entity.MessageEntity{
@@ -169,6 +176,85 @@ func TestGetMessage(t *testing.T) {
 			assert.Equal(t, expectedMessage, actualResponse["message"])
 		}
 	})
+}
+
+func TestCreateMessage(t *testing.T) {
+	var suite = setupTestSuite(t)
+	gin.SetMode(gin.TestMode)
+	router := SetupRouter(suite.learningController)
+
+	t.Run("should create a message successfully", func(t *testing.T) {
+		suite.mockService.EXPECT().CreateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).
+			DoAndReturn(func(mappedRequest *entity.MessageEntity) (*entity.MessageEntity, error) {
+				return &entity.MessageEntity{
+					Id:       1,
+					Content:  mappedRequest.Content,
+					DateTime: mappedRequest.DateTime,
+				}, nil
+			}).Times(1)
+
+		rec := httptest.NewRecorder()
+		body := jsonEncoder(t, messageRequest)
+
+		if req, err := http.NewRequest("POST", "/learning", bytes.NewReader(body)); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusCreated, rec.Code)
+
+			var expected response.Message
+			jsonDecoder(t, rec.Body.String(), &expected)
+
+			assert.Equal(t, messageRequest.Content, expected.Content)
+			assert.Equal(t, messageRequest.DateTime, expected.DateTime)
+			assert.Equal(t, 1, expected.Id)
+		}
+	})
+
+	t.Run("should occur error mapping request body 400 bad request", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		if req, err := http.NewRequest("POST", "/learning", bytes.NewReader([]byte("{invalidJson"))); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+			var actualResponse map[string]interface{}
+			jsonDecoder(t, rec.Body.String(), &actualResponse)
+			expectedMessage := "invalid character 'i' looking for beginning of object key string"
+
+			assert.Equal(t, expectedMessage, actualResponse["message"])
+		}
+	})
+
+	t.Run("should occur error creating message 500 internal server error", func(t *testing.T) {
+		suite.mockService.EXPECT().CreateMessage(gomock.AssignableToTypeOf(&entity.MessageEntity{})).
+			DoAndReturn(func(mappedRequest *entity.MessageEntity) (*entity.MessageEntity, error) {
+				return nil, errors.New("problem creating message")
+			}).Times(1)
+
+		rec := httptest.NewRecorder()
+		body := jsonEncoder(t, messageRequest)
+		if req, err := http.NewRequest("POST", "/learning", bytes.NewReader(body)); err != nil {
+			t.Fatalf("Erro ao criar requisição: %v", err)
+		} else {
+			router.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusInternalServerError, rec.Code)
+			var actualResponse map[string]interface{}
+			jsonDecoder(t, rec.Body.String(), &actualResponse)
+			assert.Equal(t, "problem creating message", actualResponse["message"])
+		}
+	})
+}
+
+func jsonEncoder[T any](t *testing.T, body T) []byte {
+	encodedJson, err := json.Marshal(body)
+
+	if err != nil {
+		t.Fatalf("Erro ao codificar JSON: %v", err)
+	}
+
+	return encodedJson
 }
 
 func jsonDecoder[T any](t *testing.T, body string, target *T) {
