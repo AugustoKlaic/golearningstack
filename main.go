@@ -26,8 +26,11 @@ import (
 func main() {
 	fmt.Println("Iniciando o projeto golearningstack!")
 
+	rabbitConn := GetConnection(GetRabbitMQURL())
+	defer CloseConnection()
+
 	messageRepo := repository.NewLearningRepository(ConnectDatabase())
-	messageService := service.NewLearningService(messageRepo)
+	messageService := service.NewLearningService(messageRepo, rabbitConn)
 	messageController := controller.NewLearningController(messageService)
 
 	if err := SetupRouter(messageController).Run("localhost:8080"); err != nil {

@@ -1,18 +1,26 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
+	"github.com/AugustoKlaic/golearningstack/pkg/queue/rabbitmq"
+	"github.com/rabbitmq/amqp091-go"
+	"log"
 )
 
 type LearningService struct {
-	repo LearningRepositoryInterface
+	repo       LearningRepositoryInterface
+	rabbitConn *amqp091.Connection
 }
 
-func NewLearningService(repo LearningRepositoryInterface) *LearningService {
-	return &LearningService{repo: repo}
+func NewLearningService(repo LearningRepositoryInterface, rabbitConn *amqp091.Connection) *LearningService {
+	return &LearningService{
+		repo:       repo,
+		rabbitConn: rabbitConn,
+	}
 }
 
 func (s *LearningService) GetAllMessages() ([]MessageEntity, error) {
@@ -35,6 +43,7 @@ func (s *LearningService) GetMessage(id int) (*MessageEntity, error) {
 	if message, err := s.repo.GetMessage(id); err != nil {
 		return nil, &MessageNotFoundError{Id: id}
 	} else {
+		publishToRabbit(message, s.rabbitConn)
 		return message, nil
 	}
 }
@@ -57,5 +66,13 @@ func (s *LearningService) UpdateMessage(newMessage *MessageEntity, id int) (*Mes
 		} else {
 			return updatedMessage, nil
 		}
+	}
+}
+
+func publishToRabbit(message *MessageEntity, rabbitConn *amqp091.Connection) {
+	if encodedJson, err := json.Marshal(message); err != nil {
+		log.Printf("Erro ao converter mensagem: %v", err)
+	} else {
+		_ = rabbitmq.PublishMessage("", "", encodedJson, rabbitConn)
 	}
 }
