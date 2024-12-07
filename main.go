@@ -14,7 +14,7 @@ import (
 	- Add custom errors - ok
 	- Add global error handler - ok
 	- Unit test - ok
-	- Add queue (rabbit or kafka)
+	- Add queue (rabbit and kafka)
 	- Add logging
 	- Do a more complex entity to test GORM framework
 	- Export properties (connections, passwords...) to a separate file with placeHolders
