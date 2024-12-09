@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
@@ -73,6 +74,6 @@ func publishToRabbit(message *MessageEntity, rabbitConn *amqp091.Connection) {
 	if encodedJson, err := json.Marshal(message); err != nil {
 		log.Printf("Erro ao converter mensagem: %v", err)
 	} else {
-		_ = rabbitmq.PublishMessage("", "", encodedJson, rabbitConn)
+		_ = rabbitmq.PublishMessage(configuration.ExchangeName, configuration.RoutingKey, encodedJson, rabbitConn)
 	}
 }
