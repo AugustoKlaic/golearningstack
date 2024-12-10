@@ -6,9 +6,13 @@ import (
 	"github.com/AugustoKlaic/golearningstack/pkg/mapper"
 	"github.com/AugustoKlaic/golearningstack/pkg/service"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 )
+
+var controllerLogger = log.New(os.Stdout, "CONTROLLER: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 type LearningController struct {
 	service service.LearningServiceInterface
@@ -19,6 +23,7 @@ func NewLearningController(service service.LearningServiceInterface) *LearningCo
 }
 
 func (ctrl *LearningController) GetAllMessages(c *gin.Context) {
+	controllerLogger.Println("Getting all messages...")
 	if messages, err := ctrl.service.GetAllMessages(); err != nil {
 		HandleError(c, err)
 		return
@@ -29,6 +34,7 @@ func (ctrl *LearningController) GetAllMessages(c *gin.Context) {
 
 func (ctrl *LearningController) GetMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
+	controllerLogger.Printf("Getting message with Id: %v", id)
 
 	if message, err := ctrl.service.GetMessage(id); err != nil {
 		HandleError(c, err)
@@ -39,6 +45,7 @@ func (ctrl *LearningController) GetMessage(c *gin.Context) {
 }
 
 func (ctrl *LearningController) CreateMessage(c *gin.Context) {
+	controllerLogger.Println("Creating new message ...")
 	var message request.MessageRequest
 
 	if err := c.BindJSON(&message); err != nil {
@@ -56,6 +63,7 @@ func (ctrl *LearningController) CreateMessage(c *gin.Context) {
 
 func (ctrl *LearningController) DeleteMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
+	controllerLogger.Printf("Deleting message with Id: %v", id)
 
 	if err := ctrl.service.DeleteMessage(id); err != nil {
 		HandleError(c, err)
@@ -68,6 +76,7 @@ func (ctrl *LearningController) DeleteMessage(c *gin.Context) {
 func (ctrl *LearningController) UpdateMessage(c *gin.Context) {
 	var id, _ = strconv.Atoi(c.Param("id"))
 	var updateMessage request.MessageRequest
+	controllerLogger.Printf("Updating message with Id: %v", id)
 
 	if err := c.BindJSON(&updateMessage); err != nil {
 		HandleError(c, err)

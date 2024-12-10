@@ -1,16 +1,19 @@
 package service
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
 	"github.com/AugustoKlaic/golearningstack/pkg/queue/rabbitmq"
+	"github.com/AugustoKlaic/golearningstack/pkg/utils"
 	"github.com/rabbitmq/amqp091-go"
 	"log"
+	"os"
 )
+
+var serviceLogger = log.New(os.Stdout, "SERVICE: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 type LearningService struct {
 	repo       LearningRepositoryInterface
@@ -25,6 +28,7 @@ func NewLearningService(repo LearningRepositoryInterface, rabbitConn *amqp091.Co
 }
 
 func (s *LearningService) GetAllMessages() ([]MessageEntity, error) {
+	serviceLogger.Println("Getting all messages...")
 	if messages, err := s.repo.FindAllMessages(); err != nil {
 		return nil, fmt.Errorf("problem retrieving messages: %v", err)
 	} else {
@@ -33,6 +37,7 @@ func (s *LearningService) GetAllMessages() ([]MessageEntity, error) {
 }
 
 func (s *LearningService) CreateMessage(message *MessageEntity) (*MessageEntity, error) {
+	serviceLogger.Println("Creating message...")
 	if newMessage, err := s.repo.CreateMessage(message); err != nil {
 		return nil, fmt.Errorf("problem creating message: %v", err)
 	} else {
@@ -41,6 +46,7 @@ func (s *LearningService) CreateMessage(message *MessageEntity) (*MessageEntity,
 }
 
 func (s *LearningService) GetMessage(id int) (*MessageEntity, error) {
+	serviceLogger.Printf("Getting message with Id: %d", id)
 	if message, err := s.repo.GetMessage(id); err != nil {
 		return nil, &MessageNotFoundError{Id: id}
 	} else {
@@ -50,6 +56,7 @@ func (s *LearningService) GetMessage(id int) (*MessageEntity, error) {
 }
 
 func (s *LearningService) DeleteMessage(id int) error {
+	serviceLogger.Printf("Deleting message with Id: %d", id)
 	if err := s.repo.DeleteMessage(id); err != nil {
 		return fmt.Errorf("problem deleting message with id: %d. Error: %v", id, err)
 	}
@@ -57,6 +64,7 @@ func (s *LearningService) DeleteMessage(id int) error {
 }
 
 func (s *LearningService) UpdateMessage(newMessage *MessageEntity, id int) (*MessageEntity, error) {
+	serviceLogger.Printf("Updating message with Id: %d", id)
 	if oldMessage, err := s.GetMessage(id); err != nil {
 		return nil, err
 	} else {
@@ -71,9 +79,6 @@ func (s *LearningService) UpdateMessage(newMessage *MessageEntity, id int) (*Mes
 }
 
 func publishToRabbit(message *MessageEntity, rabbitConn *amqp091.Connection) {
-	if encodedJson, err := json.Marshal(message); err != nil {
-		log.Printf("Erro ao converter mensagem: %v", err)
-	} else {
-		_ = rabbitmq.PublishMessage(configuration.ExchangeName, configuration.RoutingKey, encodedJson, rabbitConn)
-	}
+	encodedJson := utils.JsonEncoder(message)
+	rabbitmq.PublishMessage(configuration.ExchangeName, configuration.RoutingKey, encodedJson, rabbitConn)
 }

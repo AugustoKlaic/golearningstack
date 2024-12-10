@@ -3,14 +3,15 @@ package rabbitmq
 import (
 	"github.com/rabbitmq/amqp091-go"
 	"log"
+	"os"
 )
 
-func PublishMessage(exchange, routingKey string, body []byte, rabbitConn *amqp091.Connection) error {
-	if channel, err := rabbitConn.Channel(); err != nil {
-		return err
-	} else {
-		defer channel.Close()
+var rabbitProducerLogger = log.New(os.Stdout, "RABBIT_PRODUCER: ", log.Ldate|log.Ltime|log.Lshortfile)
 
+func PublishMessage(exchange, routingKey string, body []byte, rabbitConn *amqp091.Connection) {
+	if channel, err := rabbitConn.Channel(); err != nil {
+		rabbitProducerLogger.Fatalf("Failed to open a channel: %s", err)
+	} else {
 		if err := channel.Publish(
 			exchange,
 			routingKey,
@@ -21,11 +22,9 @@ func PublishMessage(exchange, routingKey string, body []byte, rabbitConn *amqp09
 				Body:        body,
 			},
 		); err != nil {
-			log.Printf("Erro ao publicar mensagem: %v", err)
-			return err
+			rabbitProducerLogger.Printf("Error publishing message: %v", err)
 		}
 	}
 
-	log.Printf("Mensagem publicada: %s", body)
-	return nil
+	rabbitProducerLogger.Printf("Message published successfully: %s", body)
 }

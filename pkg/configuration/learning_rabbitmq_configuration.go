@@ -3,6 +3,7 @@ package configuration
 import (
 	"github.com/rabbitmq/amqp091-go"
 	"log"
+	"os"
 	"sync"
 )
 
@@ -10,6 +11,8 @@ import (
  - Todo hide connection url details in a separate file
  - Operator "once.Do()" returns a singleton
 */
+
+var rabbitConfigLogger = log.New(os.Stdout, "CONFIGURATION: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 var (
 	conn         *amqp091.Connection
@@ -29,7 +32,7 @@ func GetConnection(url string) *amqp091.Connection {
 		var err error
 		conn, err = amqp091.Dial(url)
 		if err != nil {
-			log.Fatalf("Erro ao conectar ao RabbitMQ: %v", err)
+			rabbitConfigLogger.Fatalf("Error connecting to RabbitMQ: %v", err)
 		}
 	})
 
@@ -39,9 +42,8 @@ func GetConnection(url string) *amqp091.Connection {
 func ConfigureRabbitMQ(conn *amqp091.Connection) {
 	channel, err := conn.Channel()
 	if err != nil {
-		log.Fatalf("erro ao criar canal: %v", err)
+		rabbitConfigLogger.Fatalf("Error creating channel: %v", err)
 	}
-	defer channel.Close()
 
 	setupExchange(channel)
 	setupQueue(channel)
@@ -50,6 +52,9 @@ func ConfigureRabbitMQ(conn *amqp091.Connection) {
 
 func CloseConnection() {
 	if conn != nil {
+		rabbitConfigLogger.Println("Closing connection to RabbitMQ")
+		channel, _ := conn.Channel()
+		_ = channel.Close()
 		_ = conn.Close()
 	}
 }
@@ -65,7 +70,7 @@ func setupExchange(channel *amqp091.Channel) {
 		nil,
 	)
 	if err != nil {
-		log.Fatalf("erro ao declarar exchange: %v", err)
+		rabbitConfigLogger.Fatalf("Error declaring exchange: %v", err)
 	}
 }
 
@@ -79,7 +84,7 @@ func setupQueue(channel *amqp091.Channel) {
 		nil,
 	)
 	if err != nil {
-		log.Fatalf("erro ao declarar fila: %v", err)
+		rabbitConfigLogger.Fatalf("Error declaring queue: %v", err)
 	}
 }
 
@@ -92,8 +97,8 @@ func bindQueueExchange(channel *amqp091.Channel) {
 		nil,
 	)
 	if err != nil {
-		log.Fatalf("erro ao vincular fila à exchange: %v", err)
+		rabbitConfigLogger.Fatalf("Error linking queue to exchange: %v", err)
 	}
 
-	log.Println("Exchange e fila configuradas com sucesso!")
+	rabbitConfigLogger.Println("Exchange and queue successfully bind!")
 }

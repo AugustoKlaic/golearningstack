@@ -14,7 +14,7 @@ func SetupRouter(messageController *controller.LearningController) *gin.Engine {
 		messageApi.GET("/:id", messageController.GetMessage)
 		messageApi.POST("", messageController.CreateMessage)
 		messageApi.DELETE(":id", messageController.DeleteMessage)
-		messageApi.PATCH("/:id", messageController.UpdateMessage)
+		messageApi.PUT("/:id", messageController.UpdateMessage)
 	}
 
 	return router
