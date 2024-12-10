@@ -16,7 +16,7 @@ var (
 	once         sync.Once
 	ExchangeName = "message-api-exchange"
 	exchangeType = "direct"
-	queueName    = "message-api-queue"
+	QueueName    = "message-api-queue"
 	RoutingKey   = "message-api"
 )
 
@@ -33,6 +33,10 @@ func GetConnection(url string) *amqp091.Connection {
 		}
 	})
 
+	return conn
+}
+
+func ConfigureRabbitMQ(conn *amqp091.Connection) {
 	channel, err := conn.Channel()
 	if err != nil {
 		log.Fatalf("erro ao criar canal: %v", err)
@@ -42,8 +46,6 @@ func GetConnection(url string) *amqp091.Connection {
 	setupExchange(channel)
 	setupQueue(channel)
 	bindQueueExchange(channel)
-
-	return conn
 }
 
 func CloseConnection() {
@@ -69,7 +71,7 @@ func setupExchange(channel *amqp091.Channel) {
 
 func setupQueue(channel *amqp091.Channel) {
 	_, err := channel.QueueDeclare(
-		queueName,
+		QueueName,
 		true,
 		false,
 		false,
@@ -83,7 +85,7 @@ func setupQueue(channel *amqp091.Channel) {
 
 func bindQueueExchange(channel *amqp091.Channel) {
 	err := channel.QueueBind(
-		queueName,
+		QueueName,
 		RoutingKey,
 		ExchangeName,
 		false,
