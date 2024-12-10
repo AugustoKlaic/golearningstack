@@ -19,10 +19,10 @@ import (
 	- Unit test - ok
 	- Add queue (rabbit - ok and kafka - in progress)
 	- Add logging - ok
-	- Export properties (connections, passwords...) to a separate file with placeHolders
+	- Export properties to a separate file with placeHolders - ok
+	- Sonar - ok
 	- Secure API with jwtToken
 	- MongoDb?
-	- Sonar? It exists for golang?
 	- Do a more complex entity to test GORM framework
 */
 
