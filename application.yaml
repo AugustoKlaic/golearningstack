@@ -1,0 +1,14 @@
+db:
+  host: "localhost"
+  user: "postgres"
+  password: "postgres"
+  dbname: "learningDb"
+  port: "5432"
+rabbitmq:
+  host: "localhost"
+  user: "guest"
+  password: "guest"
+  port: "5672"
+gin:
+  host: "localhost"
+  port: "8080"

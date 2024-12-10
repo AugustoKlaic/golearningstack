@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"fmt"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -12,14 +13,16 @@ import (
  - Using GORM as connector between application and database postgres
  - AutoMigrate creates the tables automatically
  - Underline is for ignoring the return of function
- - Todo hide connection details in a separate file
  - Todo create a separate func to call automigrate
 */
 
 var databaseConfigLogger = log.New(os.Stdout, "CONFIGURATION: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 func ConnectDatabase() *gorm.DB {
-	dsn := "host=localhost user=postgres password=postgres dbname=learningDb port=5432 sslmode=disable"
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		Props.DB.Host, Props.DB.User, Props.DB.Password, Props.DB.Dbname, Props.DB.Port)
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		databaseConfigLogger.Fatalf("Failed to connect to database: %v", err)

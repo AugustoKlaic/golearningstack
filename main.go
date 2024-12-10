@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
 	. "github.com/AugustoKlaic/golearningstack/pkg/configuration"
@@ -17,18 +18,19 @@ import (
 	- Add global error handler - ok
 	- Unit test - ok
 	- Add queue (rabbit - ok and kafka - in progress)
-	- Add logging
-	- Do a more complex entity to test GORM framework
+	- Add logging - ok
 	- Export properties (connections, passwords...) to a separate file with placeHolders
 	- Secure API with jwtToken
 	- MongoDb?
 	- Sonar? It exists for golang?
+	- Do a more complex entity to test GORM framework
 */
 
 var mainLogger = log.New(os.Stdout, "MAIN: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 func main() {
 	mainLogger.Println("Starting golearningstack project!")
+	LoadConfig("application.yaml")
 
 	rabbitConn := GetConnection(GetRabbitMQURL())
 	ConfigureRabbitMQ(rabbitConn)
@@ -41,7 +43,8 @@ func main() {
 	messageApiConsumer := queue.NewMessageApiConsumer(messageService)
 	messageApiConsumer.Consume()
 
-	if err := SetupRouter(messageController).Run("localhost:8080"); err != nil {
+	if err := SetupRouter(messageController).
+		Run(fmt.Sprintf("%s:%s", Props.Gin.Host, Props.Gin.Port)); err != nil {
 		mainLogger.Fatalf("Error starting API. Error: %v", err)
 	} else {
 		mainLogger.Println("Project started on port 8080!")

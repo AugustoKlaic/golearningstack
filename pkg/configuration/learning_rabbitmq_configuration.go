@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"fmt"
 	"github.com/rabbitmq/amqp091-go"
 	"log"
 	"os"
@@ -24,7 +25,8 @@ var (
 )
 
 func GetRabbitMQURL() string {
-	return "amqp://guest:guest@localhost:5672"
+	return fmt.Sprintf("amqp://%s:%s@%s:%s",
+		Props.RabbitMQ.User, Props.RabbitMQ.Password, Props.RabbitMQ.Host, Props.RabbitMQ.Port)
 }
 
 func GetConnection(url string) *amqp091.Connection {
