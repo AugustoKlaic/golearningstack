@@ -29,6 +29,9 @@ type Config struct {
 		Host string `yaml:"host"`
 		Port string `yaml:"port"`
 	} `yaml:"gin"`
+	Jwt struct {
+		Secret string `yaml:"secret"`
+	} `yaml:"jwt"`
 }
 
 func LoadConfig(filePath string) {

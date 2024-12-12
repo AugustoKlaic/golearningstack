@@ -22,6 +22,9 @@ import (
 	- Export properties to a separate file with placeHolders - ok
 	- Sonar - ok
 	- Secure API with jwtToken
+	- swagger for golang
+	- Adjust code to be more Object-Oriented
+ 	- Jenkins
 	- MongoDb?
 	- Do a more complex entity to test GORM framework
 */
