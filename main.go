@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/security"
 	. "github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
 	"github.com/AugustoKlaic/golearningstack/pkg/queue"
@@ -45,8 +46,9 @@ func main() {
 	messageController := controller.NewLearningController(messageService)
 	messageApiConsumer := queue.NewMessageApiConsumer(messageService)
 	messageApiConsumer.Consume()
+	middleware := security.NewMiddlewareTokenValidation()
 
-	if err := SetupRouter(messageController).
+	if err := SetupRouter(messageController, middleware).
 		Run(fmt.Sprintf("%s:%s", Props.Gin.Host, Props.Gin.Port)); err != nil {
 		mainLogger.Fatalf("Error starting API. Error: %v", err)
 	} else {
