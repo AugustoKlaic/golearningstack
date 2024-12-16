@@ -2,13 +2,12 @@ package service
 
 import (
 	"fmt"
-	"github.com/AugustoKlaic/golearningstack/pkg/configuration"
+	. "github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
 	"github.com/AugustoKlaic/golearningstack/pkg/queue/rabbitmq"
 	"github.com/AugustoKlaic/golearningstack/pkg/utils"
-	"github.com/rabbitmq/amqp091-go"
 	"log"
 	"os"
 )
@@ -16,14 +15,12 @@ import (
 var serviceLogger = log.New(os.Stdout, "SERVICE: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 type LearningService struct {
-	repo       LearningRepositoryInterface
-	rabbitConn *amqp091.Connection
+	repo LearningRepositoryInterface
 }
 
-func NewLearningService(repo LearningRepositoryInterface, rabbitConn *amqp091.Connection) *LearningService {
+func NewLearningService(repo LearningRepositoryInterface) *LearningService {
 	return &LearningService{
-		repo:       repo,
-		rabbitConn: rabbitConn,
+		repo: repo,
 	}
 }
 
@@ -50,7 +47,7 @@ func (s *LearningService) GetMessage(id int) (*MessageEntity, error) {
 	if message, err := s.repo.GetMessage(id); err != nil {
 		return nil, &MessageNotFoundError{Id: id}
 	} else {
-		publishToRabbit(message, s.rabbitConn)
+		publishToRabbit(message)
 		return message, nil
 	}
 }
@@ -78,7 +75,7 @@ func (s *LearningService) UpdateMessage(newMessage *MessageEntity, id int) (*Mes
 	}
 }
 
-func publishToRabbit(message *MessageEntity, rabbitConn *amqp091.Connection) {
+func publishToRabbit(message *MessageEntity) {
 	encodedJson := utils.JsonEncoder(message)
-	rabbitmq.PublishMessage(configuration.ExchangeName, configuration.RoutingKey, encodedJson, rabbitConn)
+	rabbitmq.PublishMessage(ExchangeName, RoutingKey, encodedJson, GetConnection(GetRabbitMQURL()))
 }

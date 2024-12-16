@@ -41,8 +41,9 @@ func GetConnection(url string) *amqp091.Connection {
 	return conn
 }
 
-func ConfigureRabbitMQ(conn *amqp091.Connection) {
-	channel, err := conn.Channel()
+func ConfigureRabbitMQ() {
+	rabbitConn := GetConnection(GetRabbitMQURL())
+	channel, err := rabbitConn.Channel()
 	if err != nil {
 		rabbitConfigLogger.Fatalf("Error creating channel: %v", err)
 	}

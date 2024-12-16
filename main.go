@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/AugustoKlaic/golearningstack/pkg/api/message/controller"
+	. "github.com/AugustoKlaic/golearningstack/pkg/api/message/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
-	"github.com/AugustoKlaic/golearningstack/pkg/api/security"
-	controller2 "github.com/AugustoKlaic/golearningstack/pkg/api/security/controller"
+	. "github.com/AugustoKlaic/golearningstack/pkg/api/security"
+	. "github.com/AugustoKlaic/golearningstack/pkg/api/security/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/configuration"
-	"github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
-	"github.com/AugustoKlaic/golearningstack/pkg/queue"
-	"github.com/AugustoKlaic/golearningstack/pkg/service"
+	. "github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
+	. "github.com/AugustoKlaic/golearningstack/pkg/queue"
+	. "github.com/AugustoKlaic/golearningstack/pkg/service"
 	"log"
 	"os"
 )
@@ -25,30 +25,23 @@ import (
 	- Sonar - ok
 	- Secure API with jwtToken - ok
 	- swagger for golang
+	- MongoDb to credentials storage
 	- Adjust code to be more Object-Oriented
  	- Jenkins
-	- MongoDb?
 	- Do a more complex entity to test GORM framework
 */
 
 var mainLogger = log.New(os.Stdout, "MAIN: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 func main() {
-	mainLogger.Println("Starting golearningstack project!")
+	mainLogger.Println("Loading env variables")
 	LoadConfig("application.yaml")
 
-	rabbitConn := GetConnection(GetRabbitMQURL())
-	ConfigureRabbitMQ(rabbitConn)
+	ConfigureRabbitMQ()
 	defer CloseConnection()
 	mainLogger.Println("Rabbit configuration and connection done")
 
-	messageRepo := repository.NewLearningRepository(ConnectDatabase())
-	messageService := service.NewLearningService(messageRepo, rabbitConn)
-	messageController := controller.NewLearningController(messageService)
-	messageApiConsumer := queue.NewMessageApiConsumer(messageService)
-	messageApiConsumer.Consume()
-	middleware := security.NewMiddlewareTokenValidation()
-	securityController := controller2.NewLearningSecurityController()
+	messageController, securityController, middleware := initializeDependencies()
 
 	if err := SetupRouter(messageController, securityController, middleware).
 		Run(fmt.Sprintf("%s:%s", Props.Gin.Host, Props.Gin.Port)); err != nil {
@@ -56,4 +49,18 @@ func main() {
 	} else {
 		mainLogger.Println("Project started on port 8080!")
 	}
+}
+
+func initializeDependencies() (*LearningController, *LearningSecurityController, *MiddlewareTokenValidation) {
+	messageRepo := NewLearningRepository(ConnectDatabase())
+	messageService := NewLearningService(messageRepo)
+
+	messageApiConsumer := NewMessageApiConsumer(messageService)
+	messageApiConsumer.Consume()
+
+	middleware := NewMiddlewareTokenValidation()
+	messageController := NewLearningController(messageService)
+	securityController := NewLearningSecurityController()
+
+	return messageController, securityController, middleware
 }
