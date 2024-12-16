@@ -2,7 +2,7 @@ package controller
 
 import (
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/errorvalidation"
-	"github.com/AugustoKlaic/golearningstack/pkg/api/request"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/message/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/mapper"
 	"github.com/AugustoKlaic/golearningstack/pkg/service"
 	"github.com/gin-gonic/gin"

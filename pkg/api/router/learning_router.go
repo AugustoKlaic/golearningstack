@@ -1,13 +1,14 @@
 package router
 
 import (
-	"github.com/AugustoKlaic/golearningstack/pkg/api/controller"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/message/controller"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/security"
+	controller2 "github.com/AugustoKlaic/golearningstack/pkg/api/security/controller"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRouter(messageController *controller.LearningController,
-	securityController *security.LearningSecurityController,
+	securityController *controller2.LearningSecurityController,
 	middleware *security.MiddlewareTokenValidation) *gin.Engine {
 
 	router := gin.Default()

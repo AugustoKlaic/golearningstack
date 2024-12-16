@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/AugustoKlaic/golearningstack/pkg/api/controller"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/message/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/security"
+	controller2 "github.com/AugustoKlaic/golearningstack/pkg/api/security/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
 	"github.com/AugustoKlaic/golearningstack/pkg/queue"
@@ -47,7 +48,7 @@ func main() {
 	messageApiConsumer := queue.NewMessageApiConsumer(messageService)
 	messageApiConsumer.Consume()
 	middleware := security.NewMiddlewareTokenValidation()
-	securityController := security.NewLearningSecurityController()
+	securityController := controller2.NewLearningSecurityController()
 
 	if err := SetupRouter(messageController, securityController, middleware).
 		Run(fmt.Sprintf("%s:%s", Props.Gin.Host, Props.Gin.Port)); err != nil {

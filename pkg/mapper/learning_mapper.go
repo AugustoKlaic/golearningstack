@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	"github.com/AugustoKlaic/golearningstack/pkg/api/request"
-	"github.com/AugustoKlaic/golearningstack/pkg/api/response"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/message/request"
+	"github.com/AugustoKlaic/golearningstack/pkg/api/message/response"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 )
 
