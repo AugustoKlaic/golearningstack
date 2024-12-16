@@ -22,7 +22,7 @@ import (
 	- Add logging - ok
 	- Export properties to a separate file with placeHolders - ok
 	- Sonar - ok
-	- Secure API with jwtToken
+	- Secure API with jwtToken - ok
 	- swagger for golang
 	- Adjust code to be more Object-Oriented
  	- Jenkins
@@ -47,8 +47,9 @@ func main() {
 	messageApiConsumer := queue.NewMessageApiConsumer(messageService)
 	messageApiConsumer.Consume()
 	middleware := security.NewMiddlewareTokenValidation()
+	securityController := security.NewLearningSecurityController()
 
-	if err := SetupRouter(messageController, middleware).
+	if err := SetupRouter(messageController, securityController, middleware).
 		Run(fmt.Sprintf("%s:%s", Props.Gin.Host, Props.Gin.Port)); err != nil {
 		mainLogger.Fatalf("Error starting API. Error: %v", err)
 	} else {

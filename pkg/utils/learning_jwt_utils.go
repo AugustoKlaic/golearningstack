@@ -14,7 +14,7 @@ func GenerateToken(userName string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(configuration.Props.Jwt.Secret)
+	return token.SignedString([]byte(configuration.Props.Jwt.Secret))
 }
 
 func ValidateToken(encodedToken string) (*jwt.Token, error) {
@@ -25,7 +25,7 @@ func verifyTokenSignature(token *jwt.Token) (interface{}, error) {
 	if _, isHmacSigned := token.Method.(*jwt.SigningMethodHMAC); !isHmacSigned {
 		return nil, jwt.ErrSignatureInvalid
 	}
-	return configuration.Props.Jwt.Secret, nil
+	return []byte(configuration.Props.Jwt.Secret), nil
 }
 
 func GetClaims(token *jwt.Token) (interface{}, error) {
