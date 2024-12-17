@@ -22,17 +22,18 @@ func NewLearningSecurityController() *LearningSecurityController {
 	return &LearningSecurityController{}
 }
 
-//This is just a simulation for login
-
 // @Summary Login for token generation
 // @Description Generates JWT token based on user credentials
 // @Tags Login
 // @Accept json
 // @Produce json
-// @Success 200
-// @Failure 400
+// @Param userCredentials	body	request.LoginRequest	true	"Create jwt Token for user"
+// @Success 200 {string} token
+// @Failure 403 {string} message
+// @Failure 500 {string} message
 // @Router /security/login [post]
 func (ctrl *LearningSecurityController) Login(c *gin.Context) {
+	//This is just a simulation for login for now
 	securityControllerLogger.Printf("loggin in...")
 	var userCredentials request.LoginRequest
 

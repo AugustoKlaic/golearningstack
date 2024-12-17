@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	_ "github.com/AugustoKlaic/golearningstack/docs" // importa os arquivos gerados
+	_ "github.com/AugustoKlaic/golearningstack/docs"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/message/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/security"
@@ -25,7 +25,7 @@ import (
 	- Export properties to a separate file with placeHolders - ok
 	- Sonar - ok
 	- Secure API with jwtToken - ok
-	- swagger for golang
+	- swagger for golang - ok
 	- MongoDb to credentials storage
 	- Adjust code to be more Object-Oriented
  	- Jenkins
@@ -38,7 +38,6 @@ var mainLogger = log.New(os.Stdout, "MAIN: ", log.Ldate|log.Ltime|log.Lshortfile
 // @version 1.0
 // @description This is an API that manipulate messages
 // @host localhost:8080
-// @BasePath /
 func main() {
 	mainLogger.Println("Loading env variables")
 	LoadConfig("application.yaml")

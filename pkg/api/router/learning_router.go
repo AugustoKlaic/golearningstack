@@ -3,12 +3,14 @@ package router
 import (
 	"github.com/AugustoKlaic/golearningstack/pkg/api/message/controller"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/security"
-	controller2 "github.com/AugustoKlaic/golearningstack/pkg/api/security/controller"
+	. "github.com/AugustoKlaic/golearningstack/pkg/api/security/controller"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRouter(messageController *controller.LearningController,
-	securityController *controller2.LearningSecurityController,
+	securityController *LearningSecurityController,
 	middleware *security.MiddlewareTokenValidation) *gin.Engine {
 
 	router := gin.Default()
@@ -26,6 +28,8 @@ func SetupRouter(messageController *controller.LearningController,
 	{
 		securityApi.POST("/login", securityController.Login)
 	}
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return router
 }

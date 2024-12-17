@@ -1,4 +1,34 @@
 basePath: /
+definitions:
+  request.LoginRequest:
+    properties:
+      password:
+        type: string
+      userName:
+        type: string
+    required:
+    - password
+    - userName
+    type: object
+  request.MessageRequest:
+    properties:
+      content:
+        type: string
+      dateTime:
+        type: string
+    required:
+    - content
+    - dateTime
+    type: object
+  response.Message:
+    properties:
+      content:
+        type: string
+      dateTime:
+        type: string
+      id:
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -6,18 +36,210 @@ info:
   title: Message API swagger
   version: "1.0"
 paths:
-  /security/login:
-    post:
-      consumes:
-      - application/json
-      description: Generates JWT token based on user credentials
+  /learning:
+    get:
+      description: Fetch all messages saved
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.Message'
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get all messages
+      tags:
+      - Message
+    post:
+      consumes:
+      - application/json
+      description: Create a new message
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Create message
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/request.MessageRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Message'
         "400":
           description: Bad Request
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new message
+      tags:
+      - Message
+  /learning/{id}:
+    delete:
+      description: Delete message by Id
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Message ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete message by Id
+      tags:
+      - Message
+    get:
+      description: Fetch message by Id
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Message ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Message'
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get message by Id
+      tags:
+      - Message
+    put:
+      consumes:
+      - application/json
+      description: Update a message
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Update message
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/request.MessageRequest'
+      - description: Message ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Message'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update a message
+      tags:
+      - Message
+  /security/login:
+    post:
+      consumes:
+      - application/json
+      description: Generates JWT token based on user credentials
+      parameters:
+      - description: Create jwt Token for user
+        in: body
+        name: userCredentials
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
       summary: Login for token generation
       tags:
       - Login
