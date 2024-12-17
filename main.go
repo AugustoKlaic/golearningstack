@@ -57,7 +57,9 @@ func main() {
 }
 
 func initializeDependencies() (*LearningController, *LearningSecurityController, *MiddlewareTokenValidation) {
-	messageRepo := NewLearningRepository(ConnectDatabase())
+	userCredentialsRepo := NewUserCredentialsRepository(ConnectMongoDatabase())
+
+	messageRepo := NewLearningRepository(ConnectPostgresDatabase())
 	messageService := NewLearningService(messageRepo)
 
 	messageApiConsumer := NewMessageApiConsumer(messageService)

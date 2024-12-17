@@ -4,6 +4,12 @@ db:
   password: "postgres"
   dbname: "learningDb"
   port: "5432"
+mongo:
+  user: ""
+  password: ""
+  host: "localhost"
+  dbname: "learningMongo"
+  port: "27017"
 rabbitmq:
   host: "localhost"
   user: "guest"

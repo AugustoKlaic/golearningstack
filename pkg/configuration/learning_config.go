@@ -32,6 +32,13 @@ type Config struct {
 	Jwt struct {
 		Secret string `yaml:"secret"`
 	} `yaml:"jwt"`
+	Mongo struct {
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		Host     string `yaml:"host"`
+		Dbname   string `yaml:"dbname"`
+		Port     string `yaml:"port"`
+	}
 }
 
 func LoadConfig(filePath string) {
