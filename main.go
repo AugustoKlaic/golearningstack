@@ -25,7 +25,7 @@ import (
 	- Export properties to a separate file with placeHolders - ok
 	- Sonar - ok
 	- Secure API with jwtToken - ok
-	- swagger for golang - ok
+	- swagger for golang (http://localhost:8080/swagger/index.html#/)- ok
 	- MongoDb to credentials storage
 	- Adjust code to be more Object-Oriented
  	- Jenkins
