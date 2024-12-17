@@ -1,0 +1,24 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: This is an API that manipulate messages
+  title: Message API swagger
+  version: "1.0"
+paths:
+  /security/login:
+    post:
+      consumes:
+      - application/json
+      description: Generates JWT token based on user credentials
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Login for token generation
+      tags:
+      - Login
+swagger: "2.0"

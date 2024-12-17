@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	_ "github.com/AugustoKlaic/golearningstack/docs" // importa os arquivos gerados
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/message/controller"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/router"
 	. "github.com/AugustoKlaic/golearningstack/pkg/api/security"
@@ -33,6 +34,11 @@ import (
 
 var mainLogger = log.New(os.Stdout, "MAIN: ", log.Ldate|log.Ltime|log.Lshortfile)
 
+// @title Message API swagger
+// @version 1.0
+// @description This is an API that manipulate messages
+// @host localhost:8080
+// @BasePath /
 func main() {
 	mainLogger.Println("Loading env variables")
 	LoadConfig("application.yaml")

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	_ "github.com/AugustoKlaic/golearningstack/docs" // importa os arquivos gerados
 	"github.com/AugustoKlaic/golearningstack/pkg/api/errorvalidation"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/security/request"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
@@ -23,6 +24,14 @@ func NewLearningSecurityController() *LearningSecurityController {
 
 //This is just a simulation for login
 
+// @Summary Login for token generation
+// @Description Generates JWT token based on user credentials
+// @Tags Login
+// @Accept json
+// @Produce json
+// @Success 200
+// @Failure 400
+// @Router /security/login [post]
 func (ctrl *LearningSecurityController) Login(c *gin.Context) {
 	securityControllerLogger.Printf("loggin in...")
 	var userCredentials request.LoginRequest
