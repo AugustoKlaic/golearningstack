@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"os"
 )
@@ -20,4 +21,14 @@ func JsonEncoder[T any](body T) []byte {
 		utilsLogger.Fatalf("Error creating JSON: %v", err)
 	}
 	return encodedJson
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
+func CheckPassword(hashedPassword, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	return err == nil
 }
