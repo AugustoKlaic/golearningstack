@@ -6,6 +6,8 @@ import (
 	"github.com/AugustoKlaic/golearningstack/pkg/api/errorvalidation"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/security/request"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
+	"github.com/AugustoKlaic/golearningstack/pkg/mapper"
+	. "github.com/AugustoKlaic/golearningstack/pkg/service"
 	"github.com/AugustoKlaic/golearningstack/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -16,10 +18,13 @@ import (
 var securityControllerLogger = log.New(os.Stdout, "SECURITY_CONTROLLER: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 type LearningSecurityController struct {
+	service UserCredentialsServiceInterface
 }
 
-func NewLearningSecurityController() *LearningSecurityController {
-	return &LearningSecurityController{}
+func NewLearningSecurityController(service UserCredentialsServiceInterface) *LearningSecurityController {
+	return &LearningSecurityController{
+		service: service,
+	}
 }
 
 // @Summary Login for token generation
@@ -50,4 +55,20 @@ func (ctrl *LearningSecurityController) Login(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{"token": token})
+}
+
+func (ctrl *LearningSecurityController) CreateUser(c *gin.Context) {
+	securityControllerLogger.Printf("Creating new user...")
+	var userCredentials request.LoginRequest
+
+	if err := c.ShouldBindJSON(&userCredentials); err != nil {
+		errorvalidation.HandleError(c, &InvalidCredentialsError{})
+		return
+	}
+
+	if newUserId, err := ctrl.service.CreateUser(mapper.ToUserCredentialsEntity(&userCredentials)); err != nil {
+		errorvalidation.HandleError(c, err)
+	} else {
+		c.IndentedJSON(http.StatusCreated, gin.H{"userId": newUserId})
+	}
 }

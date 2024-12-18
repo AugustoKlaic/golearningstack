@@ -3,6 +3,7 @@ package mapper
 import (
 	"github.com/AugustoKlaic/golearningstack/pkg/api/message/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/message/response"
+	. "github.com/AugustoKlaic/golearningstack/pkg/api/security/request"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 )
 
@@ -26,5 +27,12 @@ func ToMessageResponse(entity *entity.MessageEntity) response.Message {
 		Id:       entity.Id,
 		Content:  entity.Content,
 		DateTime: entity.DateTime,
+	}
+}
+
+func ToUserCredentialsEntity(userCredentials *LoginRequest) *entity.UserCredentials {
+	return &entity.UserCredentials{
+		Username: userCredentials.UserName,
+		Password: userCredentials.Password,
 	}
 }

@@ -26,7 +26,7 @@ func (r *UserCredentialsRepository) contextWithTimeout() (context.Context, conte
 	return context.WithTimeout(context.Background(), r.timeout)
 }
 
-func (r *UserCredentialsRepository) Create(entity entity.UserCredentials) (*mongo.InsertOneResult, error) {
+func (r *UserCredentialsRepository) Create(entity *entity.UserCredentials) (*mongo.InsertOneResult, error) {
 	ctx, cancel := r.contextWithTimeout()
 	defer cancel()
 
@@ -46,7 +46,7 @@ func (r *UserCredentialsRepository) FindByID(id string) (*entity.UserCredentials
 	return &userCredentials, nil
 }
 
-func (r *UserCredentialsRepository) Update(id string, entity entity.UserCredentials) (*mongo.UpdateResult, error) {
+func (r *UserCredentialsRepository) Update(id string, entity *entity.UserCredentials) (*mongo.UpdateResult, error) {
 	ctx, cancel := r.contextWithTimeout()
 	defer cancel()
 
