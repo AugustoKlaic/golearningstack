@@ -58,6 +58,7 @@ func main() {
 
 func initializeDependencies() (*LearningController, *LearningSecurityController, *MiddlewareTokenValidation) {
 	userCredentialsRepo := NewUserCredentialsRepository(ConnectMongoDatabase())
+	userCredentialsService := NewUserCredentialsService(userCredentialsRepo)
 
 	messageRepo := NewLearningRepository(ConnectPostgresDatabase())
 	messageService := NewLearningService(messageRepo)
@@ -67,7 +68,7 @@ func initializeDependencies() (*LearningController, *LearningSecurityController,
 
 	middleware := NewMiddlewareTokenValidation()
 	messageController := NewLearningController(messageService)
-	securityController := NewLearningSecurityController()
+	securityController := NewLearningSecurityController(userCredentialsService)
 
 	return messageController, securityController, middleware
 }

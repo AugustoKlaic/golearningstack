@@ -1,4 +1,3 @@
-basePath: /
 definitions:
   request.LoginRequest:
     properties:
@@ -213,6 +212,40 @@ paths:
       summary: Update a message
       tags:
       - Message
+  /security/add-user:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user for the system
+      parameters:
+      - description: Create a new user
+        in: body
+        name: userCredentials
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: interface
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new user
+      tags:
+      - Security
   /security/login:
     post:
       consumes:
@@ -242,5 +275,5 @@ paths:
             type: string
       summary: Login for token generation
       tags:
-      - Login
+      - Security
 swagger: "2.0"

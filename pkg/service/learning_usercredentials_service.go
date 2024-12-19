@@ -32,3 +32,20 @@ func (r *UserCredentialsService) CreateUser(newUser *entity.UserCredentials) (in
 		return createdUser.InsertedID, nil
 	}
 }
+
+func (r *UserCredentialsService) GenerateUserToken(userCredentials *entity.UserCredentials) (string, error) {
+
+	if foundUser, err := r.repository.FindByUserName(userCredentials.Username); err != nil {
+		return "", &UserNotFoundError{}
+	} else {
+		if utils.CheckPassword(foundUser.Password, userCredentials.Password) {
+			if token, err := utils.GenerateToken(userCredentials.Username); err != nil {
+				return token, err
+			} else {
+				return token, nil
+			}
+		} else {
+			return "", &InvalidCredentialsError{}
+		}
+	}
+}

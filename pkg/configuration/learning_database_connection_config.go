@@ -17,7 +17,9 @@ import (
  - Using GORM as connector between application and database postgres
  - AutoMigrate creates the tables automatically
  - Underline is for ignoring the return of function
- - [ctx, cancel := ...] line set a timeout for when a problem occurs with the mongo connection and invalidate it
+ - [ctx, cancel := ...] line, set a timeout for when a problem occurs with the mongo connection and invalidate it
+ - in golang to create "constraints" it has to be inside the connector, there is no annotations like java
+ - EnsureUniqueIndex is defined in each entity file to be organized
  - Todo create a separate func to call automigrate
 */
 
@@ -56,5 +58,9 @@ func ConnectMongoDatabase() *mongo.Database {
 		databaseConfigLogger.Println("MongoDB connected!")
 	}
 
-	return client.Database(Props.Mongo.Dbname)
+	var database = client.Database(Props.Mongo.Dbname)
+
+	_ = entity.EnsureUniqueIndex(database.Collection(entity.CollectionName))
+
+	return database
 }

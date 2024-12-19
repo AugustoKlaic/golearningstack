@@ -27,6 +27,7 @@ func SetupRouter(messageController *controller.LearningController,
 	securityApi := router.Group("/security")
 	{
 		securityApi.POST("/login", securityController.Login)
+		securityApi.POST("/add-user", securityController.CreateUser)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

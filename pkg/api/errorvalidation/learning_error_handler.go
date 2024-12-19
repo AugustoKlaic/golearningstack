@@ -13,15 +13,16 @@ var (
 	errMessageNotFound    = &MessageNotFoundError{}
 	errInvalidCredentials = &InvalidCredentialsError{}
 	validationErrors      = &validator.ValidationErrors{}
+	errUserNotFound       = &UserNotFoundError{}
 )
 
 func HandleError(c *gin.Context, err error) {
 
 	switch {
-	case errors.As(err, &errMessageNotFound):
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Message not found. Error: %v", err.Error())})
+	case errors.As(err, &errMessageNotFound) || errors.As(err, &errUserNotFound):
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Not found. Error: %v", err.Error())})
 	case errors.As(err, &errInvalidCredentials):
-		c.IndentedJSON(http.StatusForbidden, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 	case errors.As(err, validationErrors):
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("invalid request JSON. Error: %v", err.Error())})
 	default:

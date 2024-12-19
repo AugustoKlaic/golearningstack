@@ -33,13 +33,12 @@ func (r *UserCredentialsRepository) Create(entity *entity.UserCredentials) (*mon
 	return r.collection.InsertOne(ctx, entity)
 }
 
-func (r *UserCredentialsRepository) FindByID(id string) (*entity.UserCredentials, error) {
+func (r *UserCredentialsRepository) FindByUserName(userName string) (*entity.UserCredentials, error) {
 	ctx, cancel := r.contextWithTimeout()
 	defer cancel()
 
-	objID, _ := primitive.ObjectIDFromHex(id)
 	var userCredentials entity.UserCredentials
-	err := r.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&userCredentials)
+	err := r.collection.FindOne(ctx, bson.M{"username": userName}).Decode(&userCredentials)
 	if err != nil {
 		return nil, err
 	}

@@ -7,7 +7,7 @@ import (
 
 type UserCredentialsRepositoryInterface interface {
 	Create(entity *entity.UserCredentials) (*mongo.InsertOneResult, error)
-	FindByID(id string) (*entity.UserCredentials, error)
+	FindByUserName(userName string) (*entity.UserCredentials, error)
 	Update(id string, entity *entity.UserCredentials) (*mongo.UpdateResult, error)
 	Delete(id string) (*mongo.DeleteResult, error)
 }
