@@ -26,7 +26,7 @@ import (
 	- Sonar - ok
 	- Secure API with jwtToken - ok
 	- swagger for golang (http://localhost:8080/swagger/index.html#/)- ok
-	- MongoDb to credentials storage
+	- MongoDb to credentials storage - ok
 	- Adjust code to be more Object-Oriented
  	- Jenkins
 	- Do a more complex entity to test GORM framework
