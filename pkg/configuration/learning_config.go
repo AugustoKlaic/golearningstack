@@ -38,7 +38,11 @@ type Config struct {
 		Host     string `yaml:"host"`
 		Dbname   string `yaml:"dbname"`
 		Port     string `yaml:"port"`
-	}
+	} `yaml:"mongo"`
+	Kafka struct {
+		Host string `yaml:"host"`
+		Port string `yaml:"port"`
+	} `yaml:"kafka"`
 }
 
 func LoadConfig(filePath string) {

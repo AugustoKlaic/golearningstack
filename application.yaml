@@ -15,6 +15,9 @@ rabbitmq:
   user: "guest"
   password: "guest"
   port: "5672"
+kafka:
+  host: "localhost"
+  port: "1234"
 gin:
   host: "localhost"
   port: "8080"
