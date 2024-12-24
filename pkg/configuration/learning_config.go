@@ -40,8 +40,10 @@ type Config struct {
 		Port     string `yaml:"port"`
 	} `yaml:"mongo"`
 	Kafka struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
+		Host              string `yaml:"host"`
+		Port              string `yaml:"port"`
+		ReplicationFactor int    `yaml:"replicationFactor"`
+		NumPartitions     int    `yaml:"numPartitions"`
 	} `yaml:"kafka"`
 }
 
