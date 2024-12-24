@@ -13,7 +13,7 @@ import (
 var (
 	producer            *kafka.Producer
 	producerInitOnce    sync.Once
-	kafkaProducerLogger = log.New(os.Stdout, "RABBIT_PRODUCER: ", log.Ldate|log.Ltime|log.Lshortfile)
+	kafkaProducerLogger = log.New(os.Stdout, "KAFKA_PRODUCER: ", log.Ldate|log.Ltime|log.Lshortfile)
 )
 
 func InitializeProducer() {
