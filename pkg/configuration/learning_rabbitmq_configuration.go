@@ -53,7 +53,7 @@ func ConfigureRabbitMQ() {
 	bindQueueExchange(channel)
 }
 
-func CloseConnection() {
+func CloseRabbitMqResources() {
 	if conn != nil {
 		rabbitConfigLogger.Println("Closing connection to RabbitMQ")
 		channel, _ := conn.Channel()

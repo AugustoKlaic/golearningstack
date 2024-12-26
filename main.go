@@ -43,8 +43,12 @@ func main() {
 	LoadConfig("application.yaml")
 
 	ConfigureRabbitMQ()
-	defer CloseConnection()
+	defer CloseRabbitMqResources()
 	mainLogger.Println("Rabbit configuration and connection done")
+
+	ConfigureKafka()
+	defer CloseKafkaResources()
+	mainLogger.Println("Kafka configuration and connection done")
 
 	messageController, securityController, middleware := initializeDependencies()
 
@@ -65,6 +69,8 @@ func initializeDependencies() (*LearningController, *LearningSecurityController,
 
 	messageApiConsumer := NewMessageApiConsumer(messageService)
 	messageApiConsumer.Consume()
+	userApiConsumer := NewUserApiConsumer(userCredentialsService)
+	userApiConsumer.Consume()
 
 	middleware := NewMiddlewareTokenValidation()
 	messageController := NewLearningController(messageService)

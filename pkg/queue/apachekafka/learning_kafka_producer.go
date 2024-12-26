@@ -8,8 +8,6 @@ import (
 	"sync"
 )
 
-// https://github.com/confluentinc/confluent-kafka-go/blob/master/examples/producer_example/producer_example.go
-
 var (
 	producer            *kafka.Producer
 	producerInitOnce    sync.Once
@@ -27,10 +25,10 @@ func InitializeProducer() {
 	})
 }
 
-func PublishMessage(topic, message string) {
+func PublishMessage(topic string, message []byte) {
 	err := producer.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-		Value:          []byte(message),
+		Value:          message,
 	}, nil)
 
 	if err != nil {

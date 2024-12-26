@@ -9,13 +9,11 @@ import (
 	"sync"
 )
 
-// https://github.com/confluentinc/confluent-kafka-go/tree/master/examples
-
 var (
 	adminClient       *kafka.AdminClient
 	configInitOnce    sync.Once
 	kafkaConfigLogger = log.New(os.Stdout, "CONFIGURATION: ", log.Ldate|log.Ltime|log.Lshortfile)
-	topicName         = "message-api-topic"
+	TopicName         = "message-api-topic"
 )
 
 func GetKafkaBroker() string {
@@ -33,17 +31,18 @@ func ConfigureKafka() {
 
 	CreateTopic()
 	InitializeProducer()
+	InitializeConsumer()
 }
 
 func CreateTopic() {
 	if _, err := adminClient.CreateTopics(nil, []kafka.TopicSpecification{
 		{
-			Topic:             topicName,
+			Topic:             TopicName,
 			NumPartitions:     Props.Kafka.NumPartitions,
 			ReplicationFactor: Props.Kafka.ReplicationFactor,
 		},
 	}, nil); err != nil {
-		kafkaConfigLogger.Fatalf("failed to create topic %s: %v", topicName, err)
+		kafkaConfigLogger.Fatalf("failed to create topic %s: %v", TopicName, err)
 	}
 }
 
@@ -52,4 +51,5 @@ func CloseKafkaResources() {
 		adminClient.Close()
 	}
 	CloseProducer()
+	CloseConsumer()
 }

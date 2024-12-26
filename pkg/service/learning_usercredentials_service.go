@@ -1,9 +1,11 @@
 package service
 
 import (
+	"github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
+	"github.com/AugustoKlaic/golearningstack/pkg/queue/apachekafka"
 	"github.com/AugustoKlaic/golearningstack/pkg/utils"
 )
 
@@ -29,6 +31,7 @@ func (r *UserCredentialsService) CreateUser(newUser *entity.UserCredentials) (in
 	if createdUser, err := r.repository.Create(newUser); err != nil {
 		return nil, err
 	} else {
+		publishToKafka(newUser)
 		return createdUser.InsertedID, nil
 	}
 }
@@ -48,4 +51,9 @@ func (r *UserCredentialsService) GenerateUserToken(userCredentials *entity.UserC
 			return "", &InvalidCredentialsError{}
 		}
 	}
+}
+
+func publishToKafka(message *entity.UserCredentials) {
+	encodedJson := utils.JsonEncoder(message)
+	apachekafka.PublishMessage(configuration.TopicName, encodedJson)
 }
