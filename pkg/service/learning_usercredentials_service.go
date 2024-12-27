@@ -7,6 +7,7 @@ import (
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/repository"
 	"github.com/AugustoKlaic/golearningstack/pkg/queue/apachekafka"
 	"github.com/AugustoKlaic/golearningstack/pkg/utils"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserCredentialsService struct {
@@ -31,6 +32,7 @@ func (r *UserCredentialsService) CreateUser(newUser *entity.UserCredentials) (in
 	if createdUser, err := r.repository.Create(newUser); err != nil {
 		return nil, err
 	} else {
+		newUser.Id = createdUser.InsertedID.(primitive.ObjectID)
 		publishToKafka(newUser)
 		return createdUser.InsertedID, nil
 	}

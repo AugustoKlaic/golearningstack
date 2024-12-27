@@ -31,6 +31,6 @@ func (c *UserApiConsumer) Consume() {
 func (c *UserApiConsumer) processMessage(msg *kafka.Message) error {
 	var receivedMessage *entity.UserCredentials
 	utils.JsonDecoder(msg.Value, &receivedMessage)
-	userApiConsumerLogger.Printf("User created with Id: %d", receivedMessage.Id)
+	userApiConsumerLogger.Printf("User created with Id: %s", receivedMessage.Id.String())
 	return nil
 }

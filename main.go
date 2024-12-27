@@ -20,13 +20,14 @@ import (
 	- Add custom errors - ok
 	- Add global error handler - ok
 	- Unit test - ok
-	- Add queue (rabbit - ok and kafka - in progress)
+	- Add queue (rabbit - ok and kafka - ok)
 	- Add logging - ok
 	- Export properties to a separate file with placeHolders - ok
 	- Sonar - ok
 	- Secure API with jwtToken - ok
 	- swagger for golang (http://localhost:8080/swagger/index.html#/)- ok
 	- MongoDb to credentials storage - ok
+	- Camunda BPMN
 	- Adjust code to be more Object-Oriented
  	- Jenkins
 	- Do a more complex entity to test GORM framework
