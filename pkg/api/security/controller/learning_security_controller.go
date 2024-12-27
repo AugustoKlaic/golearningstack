@@ -4,7 +4,6 @@ import (
 	_ "github.com/AugustoKlaic/golearningstack/docs" // importa os arquivos gerados
 	"github.com/AugustoKlaic/golearningstack/pkg/api/errorvalidation"
 	"github.com/AugustoKlaic/golearningstack/pkg/api/security/request"
-	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
 	"github.com/AugustoKlaic/golearningstack/pkg/mapper"
 	. "github.com/AugustoKlaic/golearningstack/pkg/service"
 	"github.com/gin-gonic/gin"

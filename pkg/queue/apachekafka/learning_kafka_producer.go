@@ -1,7 +1,6 @@
 package apachekafka
 
 import (
-	"github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"log"
 	"os"
@@ -14,10 +13,10 @@ var (
 	kafkaProducerLogger = log.New(os.Stdout, "KAFKA_PRODUCER: ", log.Ldate|log.Ltime|log.Lshortfile)
 )
 
-func InitializeProducer() {
+func InitializeProducer(kafkaBroker string) {
 	producerInitOnce.Do(func() {
 		var err error
-		producer, err = kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": configuration.GetKafkaBroker()})
+		producer, err = kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": kafkaBroker})
 		if err != nil {
 			kafkaProducerLogger.Fatalf("failed to create producer: %v", err)
 		}

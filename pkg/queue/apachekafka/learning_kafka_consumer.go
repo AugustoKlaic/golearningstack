@@ -1,7 +1,6 @@
 package apachekafka
 
 import (
-	"github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"log"
 	"os"
@@ -17,11 +16,11 @@ var (
 	kafkaConsumerLogger = log.New(os.Stdout, "KAFKA_CONSUMER: ", log.Ldate|log.Ltime|log.Lshortfile)
 )
 
-func InitializeConsumer() {
+func InitializeConsumer(kafkaBroker string) {
 	consumerInitOnce.Do(func() {
 		var err error
 		consumer, err = kafka.NewConsumer(&kafka.ConfigMap{
-			"bootstrap.servers": configuration.GetKafkaBroker(),
+			"bootstrap.servers": kafkaBroker,
 			"group.id":          groupId,
 			"auto.offset.reset": "earliest",
 		})

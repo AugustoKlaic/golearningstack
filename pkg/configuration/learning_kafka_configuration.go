@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"context"
 	"fmt"
 	. "github.com/AugustoKlaic/golearningstack/pkg/queue/apachekafka"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
@@ -16,26 +17,27 @@ var (
 	TopicName         = "message-api-topic"
 )
 
-func GetKafkaBroker() string {
+func getKafkaBroker() string {
 	return fmt.Sprintf("%s:%s", Props.Kafka.Host, Props.Kafka.Port)
 }
 
 func ConfigureKafka() {
+	kafkaBroker := getKafkaBroker()
 	configInitOnce.Do(func() {
 		var err error
-		adminClient, err = kafka.NewAdminClient(&kafka.ConfigMap{"bootstrap.servers": GetKafkaBroker()})
+		adminClient, err = kafka.NewAdminClient(&kafka.ConfigMap{"bootstrap.servers": kafkaBroker})
 		if err != nil {
 			kafkaConfigLogger.Fatalf("failed to create admin client: %v", err)
 		}
 	})
 
 	CreateTopic()
-	InitializeProducer()
-	InitializeConsumer()
+	InitializeProducer(kafkaBroker)
+	InitializeConsumer(kafkaBroker)
 }
 
 func CreateTopic() {
-	if _, err := adminClient.CreateTopics(nil, []kafka.TopicSpecification{
+	if _, err := adminClient.CreateTopics(context.TODO(), []kafka.TopicSpecification{
 		{
 			Topic:             TopicName,
 			NumPartitions:     Props.Kafka.NumPartitions,
