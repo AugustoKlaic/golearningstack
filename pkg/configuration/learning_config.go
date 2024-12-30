@@ -45,6 +45,9 @@ type Config struct {
 		ReplicationFactor int    `yaml:"replicationFactor"`
 		NumPartitions     int    `yaml:"numPartitions"`
 	} `yaml:"kafka"`
+	Camunda struct {
+		ZeebeAddress string `yaml:"zeebe-address"`
+	}
 }
 
 func LoadConfig(filePath string) {

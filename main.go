@@ -21,6 +21,7 @@ import (
 	- Add global error handler - ok
 	- Unit test - ok
 	- Add queue (rabbit - ok and kafka - ok)
+		- kafka on windows -> https://github.com/confluentinc/confluent-kafka-go/issues/889
 	- Add logging - ok
 	- Export properties to a separate file with placeHolders - ok
 	- Sonar - ok
