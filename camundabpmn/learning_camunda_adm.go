@@ -21,7 +21,7 @@ func NewCamundaAdmin() *CamundaAdmin {
 func (admin *CamundaAdmin) ExecuteProcess(message *entity.MessageEntity) {
 
 	go configuration.CamundaClient.NewJobWorker().
-		JobType("message-updater").
+		JobType("message-update"). //name of the task definition
 		Handler(admin.camundaMessageServiceHandler.HandleMessageChange).
 		Open()
 

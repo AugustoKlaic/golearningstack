@@ -50,8 +50,8 @@ func (s *LearningService) GetMessage(id int) (*MessageEntity, error) {
 	if message, err := s.repo.GetMessage(id); err != nil {
 		return nil, &MessageNotFoundError{Id: id}
 	} else {
-		publishToRabbit(message)
 		s.camundaAdm.ExecuteProcess(message)
+		publishToRabbit(message)
 		return message, nil
 	}
 }

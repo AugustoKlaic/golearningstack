@@ -37,5 +37,5 @@ func (handler *CamundaMessageCreatedHandler) CreateMessageHandler(message *entit
 
 	response, _ := request.WithResult().Send(ctx)
 
-	camundaMessageCreateHandlerLogger.Printf("Create camunda instanceId: %d", response.ProcessInstanceKey)
+	camundaMessageCreateHandlerLogger.Printf("Create camunda instanceId: %v", response)
 }
