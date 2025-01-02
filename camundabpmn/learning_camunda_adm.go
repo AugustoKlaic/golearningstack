@@ -18,10 +18,10 @@ func NewCamundaAdmin() *CamundaAdmin {
 	}
 }
 
-func (admin *CamundaAdmin) executeProcess(message *entity.MessageEntity) {
+func (admin *CamundaAdmin) ExecuteProcess(message *entity.MessageEntity) {
 
 	go configuration.CamundaClient.NewJobWorker().
-		JobType("modify-message").
+		JobType("message-updater").
 		Handler(admin.camundaMessageServiceHandler.HandleMessageChange).
 		Open()
 

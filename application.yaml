@@ -22,11 +22,8 @@ kafka:
   replicationFactor: 1
 gin:
   host: "localhost"
-  port: "8080"
+  port: "8081"
 camunda:
-  zeebe-address: ""
-  zeebe-client-id: ""
-  zeebe-client-secret: ""
-  zeebe-authorization-server-url: ""
+  zeebe-address: "localhost:26500"
 jwt:
   secret: "806a58ce7c16ec99f11e969ae928d4d48fb508723aa5310a980dd973b94289f0997980fb73cab069428cdded4541b4abe47db82515045fceeb20cdc11da35dee"

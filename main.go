@@ -52,6 +52,9 @@ func main() {
 	defer CloseKafkaResources()
 	mainLogger.Println("Kafka configuration and connection done")
 
+	CreateClient()
+	mainLogger.Println("Camunda client started")
+
 	messageController, securityController, middleware := initializeDependencies()
 
 	if err := SetupRouter(messageController, securityController, middleware).

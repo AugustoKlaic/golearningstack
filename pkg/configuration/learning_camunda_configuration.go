@@ -9,15 +9,16 @@ import (
 
 var (
 	CamundaClient       zbc.Client
-	CamundaProcessId    = "message-api-process"
+	CamundaProcessId    = "message-updater"
 	camundaConfigLogger = log.New(os.Stdout, "CONFIGURATION: ", log.Ldate|log.Ltime|log.Lshortfile)
 )
 
-func createClient() {
+func CreateClient() {
 	var err error
 
 	CamundaClient, err = zbc.NewClient(&zbc.ClientConfig{
-		GatewayAddress: Props.Camunda.ZeebeAddress,
+		GatewayAddress:         Props.Camunda.ZeebeAddress,
+		UsePlaintextConnection: true,
 	})
 
 	if err != nil {
@@ -25,6 +26,8 @@ func createClient() {
 	}
 
 	camundaConfigLogger.Println("Successfully created client")
+
+	deployBpmnProcesses("camundabpmn/resources/message-updater.bpmn")
 }
 
 func deployBpmnProcesses(fileNames ...string) {

@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/AugustoKlaic/golearningstack/camundabpmn"
 	. "github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	. "github.com/AugustoKlaic/golearningstack/pkg/domain/error"
@@ -15,12 +16,14 @@ import (
 var serviceLogger = log.New(os.Stdout, "SERVICE: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 type LearningService struct {
-	repo LearningRepositoryInterface
+	repo       LearningRepositoryInterface
+	camundaAdm *camundabpmn.CamundaAdmin
 }
 
 func NewLearningService(repo LearningRepositoryInterface) *LearningService {
 	return &LearningService{
-		repo: repo,
+		repo:       repo,
+		camundaAdm: camundabpmn.NewCamundaAdmin(),
 	}
 }
 
@@ -48,6 +51,7 @@ func (s *LearningService) GetMessage(id int) (*MessageEntity, error) {
 		return nil, &MessageNotFoundError{Id: id}
 	} else {
 		publishToRabbit(message)
+		s.camundaAdm.ExecuteProcess(message)
 		return message, nil
 	}
 }

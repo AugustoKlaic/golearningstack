@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"github.com/AugustoKlaic/golearningstack/pkg/configuration"
 	"github.com/AugustoKlaic/golearningstack/pkg/domain/entity"
 	"github.com/camunda-community-hub/zeebe-client-go/v8/pkg/entities"
 	"github.com/camunda-community-hub/zeebe-client-go/v8/pkg/worker"
@@ -17,7 +18,9 @@ type CamundaMessageServiceHandler struct {
 }
 
 func NewCamundaMessageServiceHandler() *CamundaMessageServiceHandler {
-	return &CamundaMessageServiceHandler{}
+	return &CamundaMessageServiceHandler{
+		camundaClient: configuration.CamundaClient,
+	}
 }
 
 func (handler *CamundaMessageServiceHandler) HandleMessageChange(client worker.JobClient, job entities.Job) {
@@ -29,6 +32,5 @@ func (handler *CamundaMessageServiceHandler) HandleMessageChange(client worker.J
 	ctx := context.Background()
 	response, _ := client.NewCompleteJobCommand().JobKey(job.Key).VariablesFromObject(message)
 	_, _ = response.Send(ctx)
-
 	camundaMessageServiceHandlerLogger.Println("Camunda service task ended")
 }
