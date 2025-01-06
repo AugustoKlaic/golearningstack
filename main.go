@@ -28,10 +28,7 @@ import (
 	- Secure API with jwtToken - ok
 	- swagger for golang (http://localhost:8080/swagger/index.html#/)- ok
 	- MongoDb to credentials storage - ok
-	- Camunda BPMN
-	- Adjust code to be more Object-Oriented
- 	- Jenkins
-	- Do a more complex entity to test GORM framework
+	- Camunda BPMN - ok
 */
 
 var mainLogger = log.New(os.Stdout, "MAIN: ", log.Ldate|log.Ltime|log.Lshortfile)
